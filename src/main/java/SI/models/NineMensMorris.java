@@ -26,7 +26,7 @@ public class NineMensMorris extends GameModel {
         super(18, backMoves);
     }
 
-    public void initFields() {
+    private void initFields() {
         String fieldName;
         for(int i = 0; i < GAME_BOARD.length; i++) {
             for(int j = 0; j < GAME_BOARD[i].length; j++) {
@@ -156,4 +156,8 @@ public class NineMensMorris extends GameModel {
         }
     }
 
+    @Override
+    public String[][] getBoard() {
+        return GAME_BOARD;
+    }
 }

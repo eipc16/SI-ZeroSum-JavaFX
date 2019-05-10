@@ -1,4 +1,4 @@
-package SI.errors;
+package SI.exceptions;
 
 public class NoSuchFieldException extends Exception {
 
