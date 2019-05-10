@@ -1,6 +1,7 @@
 package SI.models;
 
 import SI.enums.Color;
+import SI.errors.NotANeighbourException;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -32,6 +33,15 @@ public class Field implements Serializable {
             default:
                 return " ";
         }
+    }
+
+    public Field getNeighbourByFieldName(String neighbourFieldName) throws NotANeighbourException {
+        for(Field field: neighbours) {
+            if(field.getName().equals(neighbourFieldName)) {
+                return field;
+            }
+        }
+        throw new NotANeighbourException(fieldName, neighbourFieldName);
     }
 
     public String getName() {

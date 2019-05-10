@@ -1,6 +1,7 @@
 package SI.models;
 
 import SI.enums.Color;
+import SI.errors.NoSuchFieldException;
 
 import java.util.*;
 
@@ -17,6 +18,13 @@ public class GameModel {
         this.mills = new ArrayList<>();
         this.numOfMans = numOfMans;
         this.backMoves = backMoves;
+    }
+
+    public Field getField(String fieldName) throws NoSuchFieldException {
+        if(fields.containsKey(fieldName)) {
+            return fields.get(fieldName);
+        }
+        throw new NoSuchFieldException(fieldName);
     }
 
     public Map<String, Field> getFields() {
