@@ -3,24 +3,34 @@ package SI.models;
 import java.io.Serializable;
 
 public class Move implements Serializable {
-    private Field source;
-    private Field target;
 
-    public Move(Field source, Field target) {
+    private String source;
+    private String target;
+
+    public Move(String source, String target) {
         this.source = source;
         this.target = target;
     }
 
-    public Field getSource() {
+    public Move(Move move) {
+        this.source = move.source;
+        this.target = move.target;
+    }
+
+    public Move getCopy() {
+        return new Move(this);
+    }
+
+    public String getSourceName() {
         return source;
     }
 
-    public Field getTarget() {
+    public String getTargetName() {
         return target;
     }
 
     @Override
     public String toString() {
-        return source == null ? target.toString() : String.format("%s -> %s", source, target);
+        return source == null ? target : String.format("%s %s", source, target);
     }
 }

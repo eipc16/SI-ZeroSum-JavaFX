@@ -8,15 +8,16 @@ import java.util.*;
 
 public abstract class GameModel implements Serializable {
 
-    protected Map<String, Field> fields;
-    protected List<Set<Field>> mills;
-    protected Map<Color, Set<Field>> fieldsByColor;
+    protected Map<String, Color> fieldColors;
+    protected List<Set<String>> mills;
+    protected Map<Color, Set<String>> fieldsByColor;
+    protected Map<String, Set<String>> fieldNeighbours;
 
     protected int numOfMans;
     protected boolean backMoves;
 
     GameModel(int numOfMans, boolean backMoves) {
-        this.fields = new HashMap<>();
+        this.fieldColors = new HashMap<>();
         this.mills = new ArrayList<>();
         this.numOfMans = numOfMans;
         this.backMoves = backMoves;
@@ -26,75 +27,87 @@ public abstract class GameModel implements Serializable {
         for(Color c : Color.values()) {
             fieldsByColor.put(c, new HashSet<>());
         }
+
+        this.fieldNeighbours = new HashMap<>();
     }
 
-    public Field getField(String fieldName) throws NoSuchFieldException {
-        if(fields.containsKey(fieldName)) {
-            return fields.get(fieldName);
+    GameModel(GameModel gameModel) {
+        this.numOfMans = gameModel.numOfMans;
+        this.backMoves = gameModel.backMoves;
+
+        this.mills = new ArrayList<>(gameModel.getMills());
+        this.fieldColors = new HashMap<>(gameModel.getFields());
+
+        this.fieldsByColor = new HashMap<>();
+
+        for(Color c : gameModel.fieldsByColor.keySet()) {
+            this.fieldsByColor.put(c, new HashSet<>());
         }
 
-        throw new NoSuchFieldException(fieldName);
+        for(String fieldName : this.fieldColors.keySet()) {
+            this.fieldsByColor.get(getFieldColor(fieldName)).add(fieldName);
+        }
+
+        this.fieldNeighbours = new HashMap<>();
+        for(String fieldName : gameModel.fieldNeighbours.keySet()) {
+            this.fieldNeighbours.put(fieldName, gameModel.fieldNeighbours.get(fieldName));
+        }
+    }
+
+    public abstract GameModel getCopy();
+
+    public Color getFieldColor(String fieldName) {
+        if(fieldColors.containsKey(fieldName)) {
+            return fieldColors.get(fieldName);
+        }
+        return null;
     }
 
     public void setFieldColor(String fieldName, Color color) throws NoSuchFieldException {
-        if(fields.containsKey(fieldName)) {
-            Field field = fields.get(fieldName);
-            Color fieldColor = field.getColor();
+        if(fieldColors.containsKey(fieldName)) {
+            Color fieldColor = fieldColors.get(fieldName);
 
-            fieldsByColor.get(fieldColor).remove(field);
-            field.setColor(color);
-            fieldsByColor.get(color).add(field);
+            fieldsByColor.get(fieldColor).remove(fieldName);
+            fieldsByColor.get(color).add(fieldName);
+            fieldColors.put(fieldName, color);
         } else {
             throw new NoSuchFieldException(fieldName);
         }
     }
 
-    public void setFieldColor(Field field, Color color) throws NoSuchFieldException {
-        if(fields.containsValue(field)) {
-            Color fieldColor = field.getColor();
+    public List<Set<String>> getPossibleMills(String fieldName) throws NoSuchFieldException {
+        if(fieldColors.containsKey(fieldName)) {
+            List<Set<String>> possibleMills = new ArrayList<>();
 
-            fieldsByColor.get(fieldColor).remove(field);
-            field.setColor(color);
-            fieldsByColor.get(color).add(field);
-        } else {
-            throw new NoSuchFieldException(field.getName());
-        }
-    }
-
-    public List<Set<Field>> getPossibleMills(Field field) throws NoSuchFieldException {
-        if(fields.containsValue(field)) {
-            List<Set<Field>> possibleMills = new ArrayList<>();
-
-            for(Set<Field> mill : mills) {
-                if(mill.contains(field)) {
+            for(Set<String> mill : mills) {
+                if(mill.contains(fieldName)) {
                     possibleMills.add(mill);
                 }
             }
 
             return possibleMills;
         } else {
-            throw new NoSuchFieldException(field.getName());
+            throw new NoSuchFieldException(fieldName);
         }
     }
 
     public void resetFields() {
-        for(Field field : fields.values()) {
-            Color fieldColor = field.getColor();
+        for(String fieldName : fieldColors.keySet()) {
+            Color fieldColor = fieldColors.get(fieldName);
 
             if (fieldColor != Color.NONE) {
-                fieldsByColor.get(fieldColor).remove(field);
-                fieldsByColor.get(Color.NONE).add(field);
+                fieldsByColor.get(fieldColor).remove(fieldName);
+                fieldsByColor.get(Color.NONE).add(fieldName);
+                fieldColors.put(fieldName, Color.NONE);
             }
-
-            field.resetColors();
         }
     }
 
     public boolean isSamePlacing(GameModel gameModel) {
-        Map<String, Field> previousFields = gameModel.getFields();
+        Map<String, Color> previousFields = gameModel.getFields();
 
         for(String fieldName : previousFields.keySet()) {
-            if(previousFields.get(fieldName).getColor() != fields.get(fieldName).getColor()) {
+            if(!previousFields.get(fieldName).equals(fieldColors.get(fieldName))) {
                 return false;
             }
         }
@@ -102,23 +115,23 @@ public abstract class GameModel implements Serializable {
         return true;
     }
 
-    public Map<Color, Set<Field>> getFieldsByColor() {
-        return fieldsByColor;
+    public Set<String> getNeighbours(String fieldName) {
+        return fieldNeighbours.get(fieldName);
     }
 
-    public Map<String, Field> getFields() {
-        return fields;
+    public Map<String, Color> getFields() {
+        return fieldColors;
     }
 
-    public Set<Field> getFields(Color color) {
+    public Set<String> getFields(Color color) {
         return fieldsByColor.get(color);
     }
 
-    public List<Set<Field>> getMills() {
+    public List<Set<String>> getMills() {
         return mills;
     }
 
-    public Set<Field> getMill(int index) {
+    public Set<String> getMill(int index) {
         return mills.get(index);
     }
 

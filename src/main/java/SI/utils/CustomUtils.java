@@ -1,31 +1,29 @@
 package SI.utils;
 
-import java.io.*;
+import java.util.List;
 
 public class CustomUtils {
 
-    // Method for creating deep copy of a given object
-    // Original author: ddmills
-    // Link to origin code: https://gist.github.com/ddmills/5a892c358e511b924c63
-    public static Object deepCopy(Object original) {
-        Object copy = null;
+    public static <T> void replace(List<T> sourceList, int left, int right) {
         try {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            ObjectOutputStream out = new ObjectOutputStream(bos);
+            T tempLeft = sourceList.get(left);
+            T tempRight = sourceList.get(right);
 
-            out.writeObject(original);
-            out.flush();
-            out.close();
-
-            ObjectInputStream in = new ObjectInputStream(
-                    new ByteArrayInputStream(bos.toByteArray()));
-
-            copy = in.readObject();
-
-        } catch (IOException | ClassNotFoundException e) {
+            sourceList.set(left, tempRight);
+            sourceList.set(right, tempLeft);
+        } catch (IndexOutOfBoundsException e) {
             e.printStackTrace();
         }
+    }
 
-        return copy;
+    public static <T, D extends Comparable<D>> void sortArray(List<T> sourceList, List<D> coeffs) {
+        for(int i = 0; i < sourceList.size() - 1; i++) {
+            for(int j = i + 1; j < sourceList.size(); j++) {
+                if(coeffs.get(i).compareTo(coeffs.get(j)) < 0) {
+                    replace(sourceList, i, j);
+                    replace(coeffs, i, j);
+                }
+            }
+        }
     }
 }

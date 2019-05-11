@@ -1,5 +1,6 @@
-package SI.logic;
+package SI.logic.game;
 
+import SI.enums.Color;
 import SI.enums.GamePhase;
 import SI.exceptions.*;
 import SI.exceptions.NoSuchFieldException;
@@ -22,16 +23,17 @@ public interface GameInterface {
     String getWinner();
     String getResult();
 
-    List<Field> getMovesHistory();
+    Color getActivePlayerColor();
+
     List<Move> getPossibleMoves();
 
     int getPlacingMovesLeft();
+    int getMovesSinceMill();
     int getRemovingMovesLeft();
-
-    Map<String, String> getCurrentFieldTable();
 
     GameModel getGameModel();
 
+    int currentStateIndex();
     void restoreGameState(int index) throws NoSuchPreviousStateException;
     void restorePreviousState() throws NoSuchPreviousStateException;
 }

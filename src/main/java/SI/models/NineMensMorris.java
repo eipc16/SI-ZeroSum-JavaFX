@@ -3,6 +3,7 @@ package SI.models;
 import SI.enums.Color;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class NineMensMorris extends GameModel {
 
@@ -25,23 +26,32 @@ public class NineMensMorris extends GameModel {
         initMills();
     }
 
+    public NineMensMorris(NineMensMorris model) {
+        super(model);
+    }
+
+    @Override
+    public GameModel getCopy() {
+        return new NineMensMorris(this);
+    }
+
     private void initFields() {
         String fieldName;
         for(int i = 0; i < GAME_BOARD.length; i++) {
             for(int j = 0; j < GAME_BOARD[i].length; j++) {
                 fieldName = GAME_BOARD[i][j];
                 if(correctField(fieldName)) {
-                    fields.put(fieldName, new Field(fieldName));
+                    fieldColors.put(fieldName, Color.NONE);
                 }
             }
         }
 
-        fieldsByColor.put(Color.NONE, new HashSet<>(fields.values()));
+        fieldsByColor.put(Color.NONE, new HashSet<>(fieldColors.keySet()));
     }
 
     private void initMills() {
-        Set<Field> millHorizontal = new HashSet<>();
-        Set<Field> millVertical = new HashSet<>();
+        Set<String> millHorizontal = new HashSet<>();
+        Set<String> millVertical = new HashSet<>();
         int fieldCounter = 0;
 
         for(int i = 0; i < GAME_BOARD.length; i++) {
@@ -50,23 +60,21 @@ public class NineMensMorris extends GameModel {
                 String fieldNameVertical = GAME_BOARD[j][i];
 
                 if(correctField(fieldNameHorizontal)) {
-                    Field field = this.fields.get(fieldNameHorizontal);
-                    millHorizontal.add(field);
+                    millHorizontal.add(fieldNameHorizontal);
                 }
 
                 if(correctField(fieldNameVertical)) {
-                    Field field = this.fields.get(fieldNameVertical);
-                    millVertical.add(field);
+                    millVertical.add(fieldNameVertical);
                 }
 
                 if(millHorizontal.size() == 3) {
-                    Set<Field> addedSet = new HashSet<>(millHorizontal);
+                    Set<String> addedSet = new HashSet<>(millHorizontal);
                     mills.add(addedSet);
                     millHorizontal.clear();
                 }
 
                 if(millVertical.size() == 3) {
-                    Set<Field> addedSet = new HashSet<>(millVertical);
+                    Set<String> addedSet = new HashSet<>(millVertical);
                     mills.add(addedSet);
                     millVertical.clear();
                 }
@@ -83,8 +91,8 @@ public class NineMensMorris extends GameModel {
         return fieldName != null && !fieldName.equals("|") && !fieldName.equals("-");
     }
 
-    private Set<Field> getNeighbours(int fieldX, int fieldY) {
-        Set<Field> neighbours = new HashSet<>();
+    private Set<String> getNeighbours(int fieldX, int fieldY) {
+        Set<String> neighbours = new HashSet<>();
         String fieldName;
 
         for(int i = fieldX + 1; i < GAME_BOARD.length; i++) {
@@ -95,7 +103,7 @@ public class NineMensMorris extends GameModel {
             }
 
             if(correctField(fieldName)) {
-                neighbours.add(this.fields.get(fieldName));
+                neighbours.add(fieldName);
                 break;
             }
         }
@@ -108,7 +116,7 @@ public class NineMensMorris extends GameModel {
             }
 
             if(correctField(fieldName)) {
-                neighbours.add(this.fields.get(fieldName));
+                neighbours.add(fieldName);
                 break;
             }
         }
@@ -121,7 +129,7 @@ public class NineMensMorris extends GameModel {
             }
 
             if(correctField(fieldName)) {
-                neighbours.add(this.fields.get(fieldName));
+                neighbours.add(fieldName);
                 break;
             }
         }
@@ -134,7 +142,7 @@ public class NineMensMorris extends GameModel {
             }
 
             if(correctField(fieldName)) {
-                neighbours.add(this.fields.get(fieldName));
+                neighbours.add(fieldName);
                 break;
             }
         }
@@ -147,11 +155,7 @@ public class NineMensMorris extends GameModel {
             for(int j = 0; j < GAME_BOARD[i].length; j++) {
                 String fieldName = GAME_BOARD[i][j];
                 if(correctField(fieldName)) {
-                    Field field = this.fields.get(GAME_BOARD[i][j]);
-                    field.setNeighbours(getNeighbours(i, j));
-//                    String neighbours = getNeighbours(i, j).stream().map(Field::getName).collect(Collectors.joining(" "));
-//                    String output = String.format("Field %s: Neighbours: %s", field.getName(), neighbours);
-//                    System.out.println(output);
+                    this.fieldNeighbours.put(fieldName, getNeighbours(i, j));
                 }
             }
         }
@@ -182,9 +186,7 @@ public class NineMensMorris extends GameModel {
     }
 
     private String getManSymbol(String fieldName) {
-        Field field = fields.get(fieldName);
-
-        switch(field.getColor()) {
+        switch(fieldColors.get(fieldName)) {
             case WHITE:
                 return "W";
             case BLACK:
