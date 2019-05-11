@@ -52,7 +52,7 @@ public class Game extends GameState implements GameInterface {
     @Override
     public void move(String command)
             throws MoveNotPossibleException, NoSuchFieldException,
-            FieldOccupiedException, FieldEmptyException, RemovingOwnedFieldException {
+            FieldOccupiedException, FieldEmptyException, RemovingOwnedFieldException, NotANeighbourException {
         String[] fields = command.split(MOVE_SEPARATOR);
         Field source, target;
 
@@ -67,6 +67,7 @@ public class Game extends GameState implements GameInterface {
                 }
                 target = model.getField(fields[0]);
                 place(target);
+
                 movesWithoutMill++;
                 placingMovesLeft--;
                 removingMovesLeft = countActiveMills();
@@ -82,6 +83,7 @@ public class Game extends GameState implements GameInterface {
                 target = model.getField(fields[1]);
 
                 move(source, target);
+
                 movesWithoutMill++;
                 removingMovesLeft = countActiveMills();
 
@@ -96,11 +98,8 @@ public class Game extends GameState implements GameInterface {
                     throw new MoveNotPossibleException(command);
                 }
 
-                if(placingMovesLeft > 0) {
-                    placingMovesLeft--;
-                }
-
                 remove(model.getField(fields[0]));
+
                 movesWithoutMill++;
                 removingMovesLeft--;
 
@@ -112,15 +111,18 @@ public class Game extends GameState implements GameInterface {
         saveCurrentState();
     }
 
-    private void move(Field source, Field target) throws FieldOccupiedException, NoSuchFieldException, MoveNotPossibleException {
+    // Todo: Change error throwing for previous move exception
+    private void move(Field source, Field target) throws FieldOccupiedException, NoSuchFieldException, MoveNotPossibleException, NotANeighbourException {
         if(!target.getColor().equals(Color.NONE) || !source.getColor().equals(currentPlayerColor)) {
             throw new FieldOccupiedException(target.getName());
-        } else if ((!source.getNeighbours().contains(target) && !phase.equals(GamePhase.FLYING))
-                    || isForbidden(source, target)) {
+        } else if ((!source.getNeighbours().contains(target) && !phase.equals(GamePhase.FLYING))) {
+            throw new NotANeighbourException(source.getName(), target.getName());
+        } else if (isForbidden(source, target)) {
             throw new MoveNotPossibleException(String.format("%s -> %s", source, target));
         } else {
             model.setFieldColor(target, currentPlayerColor);
             model.setFieldColor(source, Color.NONE);
+            updateMills(source, target);
         }
     }
 
@@ -129,6 +131,7 @@ public class Game extends GameState implements GameInterface {
             throw new FieldOccupiedException(target.getName());
         } else {
             model.setFieldColor(target, currentPlayerColor);
+            updateMills(target);
         }
     }
 
@@ -139,6 +142,7 @@ public class Game extends GameState implements GameInterface {
             throw new RemovingOwnedFieldException(target.getName());
         } else {
             model.setFieldColor(target, Color.NONE);
+            updateMills(target);
         }
     }
 
@@ -242,22 +246,60 @@ public class Game extends GameState implements GameInterface {
         return removingMoves;
     }
 
-    private int countActiveMills() {
-        int activeMills = 0;
+    public void updateMills(Field target) {
+        updateMills(null, target);
+    }
+
+    public void updateMills(Field source, Field target) {
+        Set<Integer> newPlayerMills = new HashSet<>();
 
         for(int i = 0; i < model.getMills().size(); i++) {
-            Set<Field> mill = model.getMills().get(i);
-            System.out.println(String.format("Mill nr %d: %s", i, mill));
-            if(!playerMills.get(currentPlayerColor).contains(i)
+            Set<Field> mill = model.getMill(i);
+
+            if(target != null && mill.contains(target)
                     && mill.stream().allMatch(f -> f.getColor().equals(currentPlayerColor))) {
-                System.out.println("SUCCESS");
-                playerMills.get(currentPlayerColor).add(i);
-                this.movesWithoutMill = 0;
-                activeMills++;
-            } else {
-                playerMills.get(currentPlayerColor).remove(i);
+                newPlayerMills.add(i);
             }
+//            //remove previous mill if source moved
+//            if (source != null && mill.contains(source)
+//                    && !mill.stream().allMatch(f -> f.getColor().equals(currentPlayerColor))) {
+//                playerMills.get(currentPlayerColor).remove(i);
+//            }
+//
+//            //add new mills to the player after state change
+//            if(target != null && mill.contains(target)) {
+//                if (mill.stream().allMatch(f -> f.getColor().equals(currentPlayerColor))) {
+//                    playerMills.get(currentPlayerColor).add(i);
+//                } else {
+//                    playerMills.get(currentPlayerColor).remove(i);
+//                }
+//            }
         }
+        System.out.println("New mill before: " + newPlayerMills.toString());
+        newPlayerMills.removeAll(playerMills.get(currentPlayerColor));
+        System.out.println("New mill after: " + newPlayerMills.toString());
+        playerMills.get(currentPlayerColor).clear();
+        playerMills.get(currentPlayerColor).addAll(newPlayerMills);
+        System.out.println(String.format("Player %s mills: %s", currentPlayerColor.name(), playerMills.get(currentPlayerColor)));
+    }
+
+    //Todo: Fix mill counting when player already has a mill
+    private int countActiveMills() {
+        int activeMills = playerMills.get(currentPlayerColor).size();
+
+//        for(int i = 0; i < model.getMills().size(); i++) {
+//            Set<Field> mill = model.getMills().get(i);
+//            System.out.println(String.format("Mill nr %d: %s", i, mill));
+//            if(!playerMills.get(currentPlayerColor).contains(i)
+//                    && mill.stream().allMatch(f -> f.getColor().equals(currentPlayerColor))) {
+//                System.out.println("SUCCESS");
+//                playerMills.get(currentPlayerColor).add(i);
+//                this.movesWithoutMill = 0;
+//                activeMills++;
+//            } else {
+//                playerMills.get(currentPlayerColor).remove(i);
+//            }
+//        }
         return activeMills;
     }
 

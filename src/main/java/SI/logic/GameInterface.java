@@ -13,7 +13,7 @@ import java.util.Map;
 public interface GameInterface {
 
     void init();
-    void move(String command) throws MoveNotPossibleException, NoSuchFieldException, FieldOccupiedException, FieldEmptyException, RemovingOwnedFieldException;
+    void move(String command) throws MoveNotPossibleException, NoSuchFieldException, FieldOccupiedException, FieldEmptyException, RemovingOwnedFieldException, NotANeighbourException;
 
     GamePhase getState();
 

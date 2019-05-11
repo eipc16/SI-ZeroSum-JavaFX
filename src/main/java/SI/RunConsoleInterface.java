@@ -40,9 +40,7 @@ public class RunConsoleInterface {
                 } else {
                     try {
                         game.move(instruction);
-                    } catch (MoveNotPossibleException | NoSuchFieldException
-                            | FieldOccupiedException | FieldEmptyException
-                            | RemovingOwnedFieldException e) {
+                    } catch (MoveNotPossibleException | NoSuchFieldException | FieldOccupiedException | FieldEmptyException | RemovingOwnedFieldException | NotANeighbourException e) {
                         e.printStackTrace();
                     }
                 }
