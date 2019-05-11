@@ -72,4 +72,9 @@ public class Field implements Serializable {
     public void setNeighbours(Set<Field> neighbours) {
         this.neighbours = neighbours;
     }
+
+    @Override
+    public String toString() {
+        return fieldName;
+    }
 }

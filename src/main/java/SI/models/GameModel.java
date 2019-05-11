@@ -3,9 +3,10 @@ package SI.models;
 import SI.enums.Color;
 import SI.exceptions.NoSuchFieldException;
 
+import java.io.Serializable;
 import java.util.*;
 
-public abstract class GameModel {
+public abstract class GameModel implements Serializable {
 
     protected Map<String, Field> fields;
     protected List<Set<Field>> mills;
@@ -25,10 +26,6 @@ public abstract class GameModel {
         for(Color c : Color.values()) {
             fieldsByColor.put(c, new HashSet<>());
         }
-
-        Set<Field> fieldSet = new HashSet<>();
-        fieldSet.addAll(fields.values());
-        this.fieldsByColor.put(Color.NONE, fieldSet);
     }
 
     public Field getField(String fieldName) throws NoSuchFieldException {
@@ -64,10 +61,6 @@ public abstract class GameModel {
         }
     }
 
-    public Map<String, Field> getFields() {
-        return fields;
-    }
-
     public List<Set<Field>> getPossibleMills(Field field) throws NoSuchFieldException {
         if(fields.containsValue(field)) {
             List<Set<Field>> possibleMills = new ArrayList<>();
@@ -97,8 +90,24 @@ public abstract class GameModel {
         }
     }
 
+    public boolean isSamePlacing(GameModel gameModel) {
+        Map<String, Field> previousFields = gameModel.getFields();
+
+        for(String fieldName : previousFields.keySet()) {
+            if(previousFields.get(fieldName).getColor() != fields.get(fieldName).getColor()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public Map<Color, Set<Field>> getFieldsByColor() {
         return fieldsByColor;
+    }
+
+    public Map<String, Field> getFields() {
+        return fields;
     }
 
     public Set<Field> getFields(Color color) {

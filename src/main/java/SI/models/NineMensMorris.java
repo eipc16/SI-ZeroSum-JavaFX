@@ -1,5 +1,7 @@
 package SI.models;
 
+import SI.enums.Color;
+
 import java.util.*;
 
 public class NineMensMorris extends GameModel {
@@ -15,15 +17,12 @@ public class NineMensMorris extends GameModel {
                     {"A1",  "-",    "-",    "D1",   "-",    "-",    "G1"}
             };
 
-    public static void main(String[] args) {
-        NineMensMorris game = new NineMensMorris(false);
-        game.initFields();
-        game.initNeighbours();
-        game.initMills();
-    }
-
     public NineMensMorris(boolean backMoves) {
         super(18, backMoves);
+
+        initFields();
+        initNeighbours();
+        initMills();
     }
 
     private void initFields() {
@@ -36,6 +35,8 @@ public class NineMensMorris extends GameModel {
                 }
             }
         }
+
+        fieldsByColor.put(Color.NONE, new HashSet<>(fields.values()));
     }
 
     private void initMills() {
@@ -159,5 +160,37 @@ public class NineMensMorris extends GameModel {
     @Override
     public String[][] getBoard() {
         return GAME_BOARD;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("7  %s-----------%s-----------%s\n", getManSymbol("A7"), getManSymbol("D7"), getManSymbol("G7")) +
+                "   |           |           |\n" +
+                String.format("6  |   %s-------%s-------%s   |\n", getManSymbol("B6"), getManSymbol("D6"), getManSymbol("F6")) +
+                "   |   |       |       |   |\n" +
+                String.format("5  |   |   %s---%s---%s   |   |\n", getManSymbol("C5"), getManSymbol("D5"), getManSymbol("E5")) +
+                "   |   |   |       |   |   |\n" +
+                String.format("4  %s---%s---%s       %s---%s---%s\n", getManSymbol("A4"), getManSymbol("B4"), getManSymbol("C4"), getManSymbol("E4"), getManSymbol("F4"), getManSymbol("G4")) +
+                "   |   |   |       |   |   |\n" +
+                String.format("3  |   |   %s---%s---%s   |   |\n", getManSymbol("C3"), getManSymbol("D3"), getManSymbol("E3")) +
+                "   |   |       |       |   |\n" +
+                String.format("2  |   %s-------%s-------%s   |\n", getManSymbol("B2"), getManSymbol("D2"), getManSymbol("F2")) +
+                "   |           |           |\n" +
+                String.format("1  %s-----------%s-----------%s\n\n", getManSymbol("A1"), getManSymbol("D1"), getManSymbol("G1")) +
+                "   A---B---C---D---E---F---G\n";
+
+    }
+
+    private String getManSymbol(String fieldName) {
+        Field field = fields.get(fieldName);
+
+        switch(field.getColor()) {
+            case WHITE:
+                return "W";
+            case BLACK:
+                return "B";
+            default:
+                return " ";
+        }
     }
 }
