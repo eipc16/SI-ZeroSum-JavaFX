@@ -29,7 +29,7 @@ public class AlternativeGameHeuristic implements GameHeuristicInterface {
     }
 
     private double availableMovesCoefficient(GameInterface game) {
-        return availableMoves(game, game.getActivePlayer()) - availableMoves(game, game.getEnemyPlayer());
+        return (availableMoves(game, game.getActivePlayer()) - availableMoves(game, game.getEnemyPlayer()));
     }
 
     private double menInGameCeofficient(GameInterface game) {

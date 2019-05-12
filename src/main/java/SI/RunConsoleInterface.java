@@ -27,8 +27,8 @@ public class RunConsoleInterface {
 
         //AlgorithmInterface white = new AlphaBetaPruning(game, gameAnalytics, 1);
         //AlgorithmInterface black = new AlphaBetaPruning(game, gameAnalytics, 1);
-        AlgorithmInterface white = new MinMax(game,  4);
-        AlgorithmInterface black = new MinMax(game,  1);
+        AlgorithmInterface white = new MinMax(game,  2);
+        AlgorithmInterface black = new MinMax(game,  2);
         AlgorithmInterface algorithm;
         game.init();
 

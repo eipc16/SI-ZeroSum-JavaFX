@@ -17,9 +17,9 @@ public class GameHeuristic implements GameHeuristicInterface {
 
     @Override
     public double getResultCoefficient(GameInterface game) {
-//        return (millFactor * game.getPossibleMillsFill()
-//                + availableMovesFactor * game.getPossibleMovesDifference());
-        return 0.0;
+        return (millFactor * game.getPossibleMillsFill()
+                + availableMovesFactor * game.getPossibleMovesDifference());
+        //return 0.0;
     }
 
     public double getManFactor() {
