@@ -1,19 +1,15 @@
 package SI;
 
 import SI.algorithms.AlgorithmInterface;
-import SI.algorithms.AlphaBetaPruning;
 import SI.algorithms.MinMax;
 import SI.enums.Color;
 import SI.enums.GamePhase;
 import SI.exceptions.*;
-import SI.exceptions.NoSuchFieldException;
-import SI.logic.heuristics.GameHeuristic;
+import SI.logic.heuristics.AlternativeGameHeuristic;
 import SI.logic.heuristics.GameHeuristicInterface;
 import SI.logic.game.Game;
 import SI.logic.game.GameInterface;
-import SI.logic.game.GameState;
 import SI.models.GameModel;
-import SI.models.Move;
 import SI.models.NineMensMorris;
 
 import java.util.Scanner;
@@ -23,11 +19,12 @@ public class RunConsoleInterface {
 
         GameModel model = new NineMensMorris(false);
         GameInterface game = new Game(model);
-        GameHeuristicInterface gameAnalytics = new GameHeuristic(0.2, 0.8, 0.6);
+        GameHeuristicInterface gameAnalytics = new AlternativeGameHeuristic();
 
-        AlgorithmInterface white = new AlphaBetaPruning(game, gameAnalytics, 2);
-        AlgorithmInterface black = new AlphaBetaPruning(game, gameAnalytics, 4);
-        //AlgorithmInterface black = new MinMax(game, gameAnalytics, 2);
+        //AlgorithmInterface white = new AlphaBetaPruning(game, gameAnalytics, 1);
+        //AlgorithmInterface black = new AlphaBetaPruning(game, gameAnalytics, 1);
+        AlgorithmInterface white = new MinMax(game, gameAnalytics, 1);
+        AlgorithmInterface black = new MinMax(game, gameAnalytics, 1);
         AlgorithmInterface algorithm;
         game.init();
 
@@ -55,32 +52,19 @@ public class RunConsoleInterface {
                 startMoveTime = System.currentTimeMillis();
                 System.out.print(String.format("Placing moves: %d | Removing moves: %s\n", game.getPlacingMovesLeft(), game.getRemovingMovesLeft()));
                 System.out.println(String.format("Possible moves: %s", game.getPossibleMoves()));
-                Move best = algorithm.getNextBestMove();
-                System.out.println(String.format("Best move: %s", best));
-                System.out.println(String.format("Current coefficient: %f", gameAnalytics.getResultCoefficient((GameState) game)));
-                if(moveTime != null) {
-                    System.out.println(String.format("Move time: %.6f seconds", moveTime));
-                }
+                String best = algorithm.getNextBestMove();
+                //System.out.println(String.format("Best move: %s", best));
                 //System.out.print("\nNext move: ");
                 //instruction = scanner.nextLine();
 
-                instruction = String.format("%s", best);
-                if(instruction.equals("b")) {
-                    try {
-                        game.restorePreviousState();
-                    } catch (NoSuchPreviousStateException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    try {
-                        game.move(instruction);
-                    } catch (MoveNotPossibleException | NoSuchFieldException | FieldOccupiedException | FieldEmptyException | RemovingOwnedFieldException | NotANeighbourException e) {
-                        e.printStackTrace();
-                        break;
-                    }
+                try {
+                    //String best = scanner.nextLine();
+                    game.move(best);
+                    moveTime = (System.currentTimeMillis() - startMoveTime) / 1000D;
+                    System.out.println(String.format("Move time: %.6f seconds", moveTime));
+                } catch (MoveNotPossibleException e) {
+                    e.printStackTrace();
                 }
-
-                moveTime = (System.currentTimeMillis() - startMoveTime) / 1000D;
 
                 System.out.print("\033[H\033[2J");
                 System.out.flush();

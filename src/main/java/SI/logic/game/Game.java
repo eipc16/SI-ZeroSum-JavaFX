@@ -4,27 +4,66 @@ import SI.enums.Color;
 import SI.enums.GamePhase;
 import SI.enums.GameResult;
 import SI.exceptions.*;
-import SI.exceptions.NoSuchFieldException;
-import SI.models.Field;
 import SI.models.GameModel;
-import SI.models.Move;
-import SI.utils.CustomUtils;
 
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class Game extends GameState implements GameInterface {
+public class Game implements GameInterface {
 
-    public final static String MOVE_SEPARATOR = " ";
-    public final static int MOVES_WITHOUT_MILL = 50;
-    public final static int ALLOWED_STATE_REPETITIONS = 3;
+    private final static String MOVE_SEPARATOR = " ";
+    private final static int MOVES_WITHOUT_MILL = 50;
+    private final static int ALLOWED_STATE_REPETITIONS = 3;
 
-    private List<GameState> gameStateHistory;
-    private int currentGameStateIndex;
+    private GameModel model;
+
+    private Color currentPlayerColor;
+    private Color enemyColor;
+    private Color winnerColor;
+
+    private GameResult result;
+    private GamePhase phase;
+
+    private int placingMovesLeft = 0;
+    private int removingMovesLeft = 0;
+    private int movesWithoutMill = 0;
+    private int moveCount = 0;
+
+    private Map<Color, String> previousMove;
+    private Map<Color, Set<Integer>> playerMills;
+
+    private List<String> possibleMoves;
+
+    private List<Game> gameStateHistory;
 
     public Game(GameModel gameModel) {
-        super(gameModel);
+        this.model = gameModel;
+    }
+
+    public Game(Game game) {
+        this.model = game.model.getCopy();
+        this.currentPlayerColor = game.currentPlayerColor;
+        this.enemyColor = game.enemyColor;
+        this.winnerColor = game.winnerColor;
+        this.result = game.result;
+        this.phase = game.phase;
+        this.placingMovesLeft = game.placingMovesLeft;
+        this.removingMovesLeft = game.removingMovesLeft;
+        this.movesWithoutMill = game.movesWithoutMill;
+        this.moveCount = game.moveCount;
+        this.previousMove = new HashMap<>(game.previousMove);
+        this.possibleMoves = game.possibleMoves == null ? null : new ArrayList<>(game.possibleMoves);
+
+        this.playerMills = new HashMap<>();
+        this.playerMills.put(Color.BLACK, game.playerMills.get(Color.BLACK));
+        this.playerMills.put(Color.WHITE, game.playerMills.get(Color.WHITE));
+
+        this.gameStateHistory = new ArrayList<>(game.gameStateHistory);
+    }
+
+    @Override
+    public Game getCopy() {
+        return new Game(this);
     }
 
     @Override
@@ -39,24 +78,21 @@ public class Game extends GameState implements GameInterface {
         this.movesWithoutMill = 0;
 
         this.playerMills = new HashMap<>();
-        this.possibleMoves = null;
-
         playerMills.put(Color.WHITE, new HashSet<>());
         playerMills.put(Color.BLACK, new HashSet<>());
+
         this.gameStateHistory = new ArrayList<>();
         this.previousMove = new HashMap<>();
+        this.previousMove.put(Color.WHITE, null);
+        this.previousMove.put(Color.BLACK,null);
 
         initPlayers();
         model.resetFields();
-        saveCurrentState();
     }
 
     @Override
-    public void move(String command)
-            throws MoveNotPossibleException, NoSuchFieldException,
-            FieldOccupiedException, FieldEmptyException, RemovingOwnedFieldException, NotANeighbourException {
+    public void move(String command) throws MoveNotPossibleException {
         String[] fields = command.split(MOVE_SEPARATOR);
-        String source, target;
 
         if(fields.length < 1 || fields.length > 2) {
             throw new MoveNotPossibleException(command);
@@ -64,7 +100,9 @@ public class Game extends GameState implements GameInterface {
 
         switch(phase) {
             case PLACING:
-                if(fields.length != 1) {
+                if(fields.length != 1
+                        || !model.getFields().containsKey(fields[0])
+                        || !model.getFieldColor(fields[0]).equals(Color.NONE)) {
                     throw new MoveNotPossibleException(command);
                 }
 
@@ -78,25 +116,28 @@ public class Game extends GameState implements GameInterface {
 
             case MOVING:
             case FLYING:
-                if(fields.length != 2) {
+                if(fields.length != 2
+                        || !model.getFields().containsKey(fields[0])
+                        || !model.getFields().containsKey(fields[1])
+                        || !model.getFieldColor(fields[1]).equals(Color.NONE)
+                        || !model.getFieldColor(fields[0]).equals(currentPlayerColor)
+                        || isBackMove(fields[0], fields[1])
+                        || phase.equals(GamePhase.MOVING) && !model.getNeighbours(fields[0]).contains(fields[1])) {
                     throw new MoveNotPossibleException(command);
                 }
-                source = fields[0];
-                target = fields[1];
 
-                move(source, target);
+                move(fields[0], fields[1]);
                 this.moveCount++;
                 movesWithoutMill++;
                 removingMovesLeft = countActiveMills();
-
-                if(!model.backMovesAllowed()) {
-                    previousMove.put(currentPlayerColor, new Move(source, target));
-                }
+                this.previousMove.put(currentPlayerColor, fields[0] + MOVE_SEPARATOR + fields[1]);
 
                 break;
 
             case REMOVING:
-                if(fields.length != 1) {
+                if(fields.length != 1
+                        || !model.getFields().containsKey(fields[0])
+                        || !model.getFieldColor(fields[0]).equals(enemyColor)) {
                     throw new MoveNotPossibleException(command);
                 }
 
@@ -107,12 +148,10 @@ public class Game extends GameState implements GameInterface {
                 break;
         }
 
-
         this.possibleMoves = null;
 
         updateState();
         updateGameResult();
-        saveCurrentState();
     }
 
     @Override
@@ -121,81 +160,59 @@ public class Game extends GameState implements GameInterface {
     }
 
     // Todo: Change error throwing for previous move exception
-    private void move(String source, String target) throws FieldOccupiedException, NoSuchFieldException, MoveNotPossibleException, NotANeighbourException {
-        if(!model.getFieldColor(target).equals(Color.NONE)) {
-            throw new FieldOccupiedException(target);
-        } else if (!model.getFieldColor(source).equals(currentPlayerColor)) {
-            throw new FieldOccupiedException(source);
-        } else if ((!model.getNeighbours(source).contains(target) && !phase.equals(GamePhase.FLYING))) {
-            throw new NotANeighbourException(source, target);
-        } else if (isForbidden(source, target)) {
-            throw new MoveNotPossibleException(String.format("%s -> %s", source, target));
-        } else {
-            model.setFieldColor(target, currentPlayerColor);
-            model.setFieldColor(source, Color.NONE);
-            updateMills(target);
-        }
+    private void move(String source, String target) {
+        model.setFieldColor(target, currentPlayerColor);
+        model.setFieldColor(source, Color.NONE);
+        updateMills(target);
     }
 
-    private void place(String target) throws FieldOccupiedException, NoSuchFieldException {
-        if(!model.getFieldColor(target).equals(Color.NONE)) {
-            throw new FieldOccupiedException(target);
-        } else {
-            model.setFieldColor(target, currentPlayerColor);
-            updateMills(target);
-        }
+    private void place(String target) {
+        model.setFieldColor(target, currentPlayerColor);
+        updateMills(target);
     }
 
-    private void remove(String target) throws FieldEmptyException, NoSuchFieldException, RemovingOwnedFieldException {
-        if(model.getFieldColor(target).equals(Color.NONE)) {
-            throw new FieldEmptyException(target);
-        } else if (model.getFieldColor(target) == currentPlayerColor) {
-            throw new RemovingOwnedFieldException(target);
-        } else {
-            model.setFieldColor(target, Color.NONE);
-            updateMills(target);
-        }
+    private void remove(String target) {
+        model.setFieldColor(target, Color.NONE);
+        updateMills(target);
     }
 
-    private boolean isForbidden(String from, String to) {
-        if (model.getFieldColor(to) != Color.NONE) {
-            return true;
-        }
-
-        Move previousFields = previousMove.get(currentPlayerColor);
-
-        if (previousFields == null) {
+    private boolean isBackMove(String from, String to) {
+        if (previousMove.get(currentPlayerColor) == null) {
             return false;
         }
 
-        return from.equals(previousFields.getTargetName())
-                && to.equals(previousFields.getSourceName());
+        String[] previousFields = previousMove.get(currentPlayerColor).split(MOVE_SEPARATOR);
+
+        if(previousFields.length < 2) {
+            return true;
+        }
+
+        return from.equals(previousFields[1])
+                && to.equals(previousFields[0]);
     }
 
     @Override
-    public List<Move> getPossibleMoves() {
-//        if(possibleMoves != null) {
-//            return possibleMoves;
-//        }
+    public List<String> getPossibleMoves() {
+        if(possibleMoves == null) {
+            possibleMoves = getPhasePossibleMoves();
+        }
 
-        switch (phase) {
+        return possibleMoves;
+    }
+
+    private List<String> getPhasePossibleMoves() {
+        switch(phase) {
             case PLACING:
-                this.possibleMoves = getPossiblePlacingMoves();
-                break;
+                return getPossiblePlacingMoves();
             case MOVING:
-                this.possibleMoves = getPossibleMovingMoves();
-                break;
+                return getPossibleMovingMoves();
             case FLYING:
-                this.possibleMoves = getPossibleFlyingMoves();
-                break;
+                return getPossibleFlyingMoves();
             case REMOVING:
-                this.possibleMoves = getPossibleRemovingMoves();
-                break;
+                return getPossibleRemovingMoves();
             default:
                 return new ArrayList<>();
         }
-
-        return this.possibleMoves;
     }
 
     @Override
@@ -203,28 +220,19 @@ public class Game extends GameState implements GameInterface {
         return movesWithoutMill;
     }
 
-    @Override
-    public int currentStateIndex() {
-        return currentGameStateIndex;
+
+    private List<String> getPossiblePlacingMoves() {
+        return new ArrayList<>(model.getFields(Color.NONE));
     }
 
-    private List<Move> getPossiblePlacingMoves() {
-        Set<String> fieldsWithoutColor = model.getFields(Color.NONE);
-
-        return fieldsWithoutColor
-                .stream()
-                .map(field -> new Move(null, field))
-                .collect(Collectors.toList());
-    }
-
-    private List<Move> getPossibleMovingMoves() {
-        List<Move> movingMoves = new ArrayList<>();
+    private List<String> getPossibleMovingMoves() {
+        List<String> movingMoves = new ArrayList<>();
         Set<String> fieldsWithPlayerColor = model.getFields(currentPlayerColor);
 
         for(String fieldName : fieldsWithPlayerColor) {
             for(String neighbour : model.getNeighbours(fieldName)) {
-                if(!isForbidden(fieldName, neighbour) && model.getFieldColor(neighbour).equals(Color.NONE)) {
-                    movingMoves.add(new Move(fieldName, neighbour));
+                if(!isBackMove(fieldName, neighbour) && model.getFieldColor(neighbour).equals(Color.NONE)) {
+                    movingMoves.add(fieldName + MOVE_SEPARATOR + neighbour);
                 }
             }
         }
@@ -232,16 +240,16 @@ public class Game extends GameState implements GameInterface {
         return movingMoves;
     }
 
-    private List<Move> getPossibleFlyingMoves() {
-        List<Move> flyingMoves = new ArrayList<>();
+    private List<String> getPossibleFlyingMoves() {
+        List<String> flyingMoves = new ArrayList<>();
 
         Set<String> fieldsWithoutColor = model.getFields(Color.NONE);
         Set<String> fieldsWithPlayerColor = model.getFields(currentPlayerColor);
 
         for(String field : fieldsWithPlayerColor) {
             for(String target : fieldsWithoutColor) {
-                if(!isForbidden(field, target)) {
-                    flyingMoves.add(new Move(field, target));
+                if(!isBackMove(field, target) && model.getFieldColor(target).equals(Color.NONE)) {
+                    flyingMoves.add(field + MOVE_SEPARATOR + target);
                 }
             }
         }
@@ -249,24 +257,19 @@ public class Game extends GameState implements GameInterface {
         return flyingMoves;
     }
 
-    private List<Move> getPossibleRemovingMoves() {
-        List<Move> removingMoves = new ArrayList<>();
+    private List<String> getPossibleRemovingMoves() {
+        List<String> removingMoves = new ArrayList<>();
 
         Set<String> fieldsWithEnemyColor = model.getFields(enemyColor);
 
         for(String fieldName : fieldsWithEnemyColor) {
-            try {
-                if (!isPartOfMill(fieldName, enemyColor)) {
-                    removingMoves.add(new Move(null, fieldName));
-                }
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
+            if (!isPartOfMill(fieldName, enemyColor)) {
+                removingMoves.add(fieldName);
             }
-
         }
 
         if(removingMoves.isEmpty()) {
-            fieldsWithEnemyColor.forEach(field -> removingMoves.add(new Move(null, field)));
+            removingMoves.addAll(fieldsWithEnemyColor);
         }
 
         return removingMoves;
@@ -295,7 +298,7 @@ public class Game extends GameState implements GameInterface {
         return playerMills.get(currentPlayerColor).size();
     }
 
-    private boolean isPartOfMill(String field, Color color) throws NoSuchFieldException {
+    private boolean isPartOfMill(String field, Color color) {
         for(Set<String> mill : model.getPossibleMills(field)) {
             if(mill.stream()
                     .allMatch(f -> model.getFieldColor(f).equals(color))) {
@@ -319,7 +322,7 @@ public class Game extends GameState implements GameInterface {
             result = GameResult.TOO_MANY_MOVES_WITHOUT_MILL;
             phase = GamePhase.FINISHED;
         } else if (countStateRepetitions() > ALLOWED_STATE_REPETITIONS) {
-            this.winnerColor = Color.NONE;
+            this.winnerColor = enemyColor;
             result = GameResult.REPEATED_STATE;
             phase = GamePhase.FINISHED;
         }
@@ -328,7 +331,7 @@ public class Game extends GameState implements GameInterface {
     private int countStateRepetitions() {
         int repetitions = 0;
 
-        for(GameState gameState : gameStateHistory) {
+        for(Game gameState : gameStateHistory) {
             if(model.isSamePlacing(gameState.model)) {
                 repetitions++;
             }
@@ -344,8 +347,6 @@ public class Game extends GameState implements GameInterface {
             } else {
                 swapPlayers();
 
-
-
                 if (placingMovesLeft > 0) {
                     phase = GamePhase.PLACING;
                 } else if (model.getFields(currentPlayerColor).size() == 3) {
@@ -355,47 +356,6 @@ public class Game extends GameState implements GameInterface {
                 }
             }
         }
-    }
-
-    private void saveCurrentState() {
-        //gameStateHistory.add((GameState) CustomUtils.deepCopy(new GameState(this)));
-        gameStateHistory.add(this.getCopy());
-        currentGameStateIndex = gameStateHistory.size() - 1;
-    }
-
-    @Override
-    public void restoreGameState(int index) throws NoSuchPreviousStateException {
-        if(index >= 0 && index < gameStateHistory.size()) {
-            //GameState gameState = (GameState) CustomUtils.deepCopy(gameStateHistory.get(index));
-            GameState gameState = gameStateHistory.get(index).getCopy();
-
-            this.model = gameState.model;
-
-            this.currentPlayerColor = gameState.currentPlayerColor;
-            this.enemyColor = gameState.enemyColor;
-            this.winnerColor = gameState.winnerColor;
-
-            this.moveCount = gameState.moveCount;
-
-            this.result = gameState.result;
-            this.phase = gameState.phase;
-
-            this.placingMovesLeft = gameState.placingMovesLeft;
-            this.removingMovesLeft = gameState.removingMovesLeft;
-            this.movesWithoutMill = gameState.movesWithoutMill;
-
-            this.previousMove = gameState.previousMove;
-            this.playerMills = gameState.playerMills;
-
-            this.currentGameStateIndex = index;
-            this.gameStateHistory = gameStateHistory.subList(0, index + 1);
-        } else {
-            throw new NoSuchPreviousStateException(index);
-        }
-    }
-
-    public void restorePreviousState() throws NoSuchPreviousStateException {
-        restoreGameState(currentGameStateIndex - 1);
     }
 
     private void initPlayers() {
@@ -420,5 +380,37 @@ public class Game extends GameState implements GameInterface {
 
     public int getTotalMoves() {
         return this.moveCount;
+    }
+
+    public String getStateName() {
+        return phase.name();
+    }
+
+    public GamePhase getState() {
+        return phase;
+    }
+
+    public Color getActivePlayer() {
+        return currentPlayerColor;
+    }
+
+    public String getWinner() {
+        return winnerColor.name();
+    }
+
+    public String getResult() {
+        return result.name();
+    }
+
+    public GameModel getGameModel() {
+        return model;
+    }
+
+    public int getPlacingMovesLeft() {
+        return placingMovesLeft;
+    }
+
+    public int getRemovingMovesLeft() {
+        return removingMovesLeft;
     }
 }

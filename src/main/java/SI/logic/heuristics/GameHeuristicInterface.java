@@ -1,7 +1,8 @@
 package SI.logic.heuristics;
 
-import SI.logic.game.GameState;
+import SI.enums.Color;
+import SI.logic.game.GameInterface;
 
 public interface GameHeuristicInterface {
-    double getResultCoefficient(GameState gameState);
+    double getResultCoefficient(GameInterface game, Color playerColor);
 }

@@ -1,7 +1,6 @@
 package SI.models;
 
 import SI.enums.Color;
-import SI.exceptions.NoSuchFieldException;
 
 import java.io.Serializable;
 import java.util.*;
@@ -57,38 +56,27 @@ public abstract class GameModel implements Serializable {
     public abstract GameModel getCopy();
 
     public Color getFieldColor(String fieldName) {
-        if(fieldColors.containsKey(fieldName)) {
-            return fieldColors.get(fieldName);
-        }
-        return null;
+        return fieldColors.get(fieldName);
     }
 
-    public void setFieldColor(String fieldName, Color color) throws NoSuchFieldException {
-        if(fieldColors.containsKey(fieldName)) {
-            Color fieldColor = fieldColors.get(fieldName);
+    public void setFieldColor(String fieldName, Color color) {
+        Color fieldColor = fieldColors.get(fieldName);
 
-            fieldsByColor.get(fieldColor).remove(fieldName);
-            fieldsByColor.get(color).add(fieldName);
-            fieldColors.put(fieldName, color);
-        } else {
-            throw new NoSuchFieldException(fieldName);
-        }
+        fieldsByColor.get(fieldColor).remove(fieldName);
+        fieldsByColor.get(color).add(fieldName);
+        fieldColors.put(fieldName, color);
     }
 
-    public List<Set<String>> getPossibleMills(String fieldName) throws NoSuchFieldException {
-        if(fieldColors.containsKey(fieldName)) {
-            List<Set<String>> possibleMills = new ArrayList<>();
+    public List<Set<String>> getPossibleMills(String fieldName) {
+        List<Set<String>> possibleMills = new ArrayList<>();
 
-            for(Set<String> mill : mills) {
-                if(mill.contains(fieldName)) {
-                    possibleMills.add(mill);
-                }
+        for(Set<String> mill : mills) {
+            if(mill.contains(fieldName)) {
+                possibleMills.add(mill);
             }
-
-            return possibleMills;
-        } else {
-            throw new NoSuchFieldException(fieldName);
         }
+
+        return possibleMills;
     }
 
     public void resetFields() {

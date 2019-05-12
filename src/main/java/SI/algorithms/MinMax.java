@@ -4,8 +4,6 @@ import SI.enums.Color;
 import SI.enums.GamePhase;
 import SI.logic.heuristics.GameHeuristicInterface;
 import SI.logic.game.GameInterface;
-import SI.logic.game.GameState;
-import SI.models.Move;
 
 public class MinMax implements AlgorithmInterface {
 
@@ -20,14 +18,14 @@ public class MinMax implements AlgorithmInterface {
     }
 
     @Override
-    public Move getNextBestMove() {
-        Move bestMove = null;
+    public String getNextBestMove() {
+        String bestMove = null;
 
         double moveCoeff;
         double bestCoeff = -Double.MAX_VALUE;
 
-        for(Move move : game.getPossibleMoves()) {
-            moveCoeff = calculateCoeff(move, 0, game.getActivePlayerColor());
+        for(String move : game.getPossibleMoves()) {
+            moveCoeff = calculateCoeff(game.getCopy(), move, 0, game.getActivePlayerColor());
 
             if(bestMove == null || moveCoeff > bestCoeff) {
                 bestMove = move;
@@ -38,23 +36,14 @@ public class MinMax implements AlgorithmInterface {
         return bestMove;
     }
 
-    private double calculateCoeff(Move move, int depth, Color startPlayerColor) {
+    private double calculateCoeff(GameInterface game, String move, int depth, Color startPlayerColor) {
         double bestResult;
 
-        int currentStateIndex = game.currentStateIndex();
-        String command;
-
-        if(move.getSourceName() != null) {
-            command = String.format("%s %s", move.getSourceName(), move.getTargetName());
-        } else {
-            command = String.format("%s", move.getTargetName());
-        }
-
         try {
-            game.move(command);
+            game.move(move);
 
             if(depth >= depthLimit) {
-                bestResult = gameAnalytics.getResultCoefficient((GameState) game);
+                bestResult = gameAnalytics.getResultCoefficient(game, startPlayerColor);
 
             } else if(!game.getState().equals(GamePhase.FINISHED)) {
 
@@ -63,8 +52,8 @@ public class MinMax implements AlgorithmInterface {
 
                 bestResult = maximize ? -Double.MAX_VALUE : Double.MAX_VALUE;
 
-                for(Move nextMove : game.getPossibleMoves()) {
-                    result = calculateCoeff(nextMove, depth + 1, startPlayerColor);
+                for(String nextMove : game.getPossibleMoves()) {
+                    result = calculateCoeff(game.getCopy(), nextMove, depth + 1, startPlayerColor);
 
                     if(maximize) {
                         if (result > bestResult) {
@@ -79,7 +68,7 @@ public class MinMax implements AlgorithmInterface {
 
             } else {
 
-                if(game.getWinner().equals(game.getActivePlayer())) {
+                if(game.getWinner().equals(startPlayerColor)) {
                     bestResult = Double.MAX_VALUE;
                 } else if (game.getWinner().equals(Color.NONE.name())) {
                     bestResult = 0;
@@ -88,8 +77,6 @@ public class MinMax implements AlgorithmInterface {
                 }
 
             }
-
-            game.restoreGameState(currentStateIndex);
 
         } catch (Exception e) {
             e.printStackTrace();

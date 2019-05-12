@@ -1,6 +1,7 @@
 package SI.logic.heuristics;
 
-import SI.logic.game.GameState;
+import SI.enums.Color;
+import SI.logic.game.GameInterface;
 
 public class GameHeuristic implements GameHeuristicInterface {
 
@@ -15,9 +16,10 @@ public class GameHeuristic implements GameHeuristicInterface {
     }
 
     @Override
-    public double getResultCoefficient(GameState gameState) {
-        return (millFactor * gameState.getPossibleMillsFill()
-                + availableMovesFactor * gameState.getPossibleMovesDifference());
+    public double getResultCoefficient(GameInterface game, Color playerColor) {
+//        return (millFactor * game.getPossibleMillsFill()
+//                + availableMovesFactor * game.getPossibleMovesDifference());
+        return 0.0;
     }
 
     public double getManFactor() {
