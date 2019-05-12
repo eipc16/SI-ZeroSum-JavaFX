@@ -21,11 +21,11 @@ public class RunConsoleInterface {
 
         GameModel model = new NineMensMorris(false);
         GameInterface game = new Game(model);
-        GameHeuristic heuristicWhite = new NumOfMansHeuristic();
+        GameHeuristic heuristicWhite = new AlternativeGameHeuristic();
         GameHeuristic heuristicBlack = new AlternativeGameHeuristic();
 
-        Algorithm white = new AlphaBetaPruning(game, 1, heuristicWhite, true);
-        Algorithm black = new AlphaBetaPruning(game, 6, heuristicBlack, false);
+        Algorithm white = new AlphaBetaPruning(game, 6, heuristicWhite, true);
+        Algorithm black = new AlphaBetaPruning(game, 1, heuristicBlack, false);
         //Algorithm black = new MinMax(game,  2, heuristicBlack, false);
         //Algorithm black = new MinMax(game,  3);
         Algorithm algorithm;
@@ -48,10 +48,10 @@ public class RunConsoleInterface {
             if(!game.getState().equals(GamePhase.FINISHED)) {
                 String best;
                 if(game.getActivePlayer().equals(Color.WHITE)) {
-                    best = white.getNextBestMove();
+                    //best = white.getNextBestMove();
+                    System.out.print("Next move: ");
+                    best = scanner.nextLine();
                 } else {
-                    //System.out.print("Next move: ");
-                    //best = scanner.nextLine();
                     best = black.getNextBestMove();
                 }
 

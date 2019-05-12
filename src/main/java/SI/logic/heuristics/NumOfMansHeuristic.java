@@ -7,11 +7,10 @@ import SI.models.GameModel;
 public class NumOfMansHeuristic extends GameHeuristic {
 
     @Override
-    public double getResultCoefficient(GameInterface game, Color playerColor) {
+    public double getResultCoefficient(GameInterface game) {
         GameModel model = game.getGameModel();
-        return playerTurn(playerColor)
-                * (game.getPlayerMans(Color.WHITE) - game.getPlayerMans(Color.BLACK))
-                + (availableMoves(game, Color.WHITE) - availableMoves(game, Color.BLACK));
+        return (game.getPlayerMans(game.getActivePlayer()) - game.getPlayerMans(game.getEnemyPlayer()))
+                + (availableMoves(game, game.getActivePlayer()) - availableMoves(game, game.getEnemyPlayer()));
     }
 
     private double availableMoves(GameInterface game, Color playerColor) {

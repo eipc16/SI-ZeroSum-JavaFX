@@ -25,7 +25,7 @@ public class AlphaBetaPruning extends Algorithm {
         double beta = Double.MAX_VALUE;
 
         Color playerColor = game.getActivePlayer();
-        List<String> possibleMoves = getPossibleMoves(playerColor);
+        List<String> possibleMoves = getPossibleMoves();
 
         for(String move : possibleMoves) {
             alpha = calculateCoeff(game.getCopy(), move, 0, playerColor, alpha, beta);
@@ -49,7 +49,7 @@ public class AlphaBetaPruning extends Algorithm {
             this.numOfInstructions++;
 
             if(depth >= depthLimit) {
-                return evaluate(playerColor);
+                return evaluate();
 
             }
 

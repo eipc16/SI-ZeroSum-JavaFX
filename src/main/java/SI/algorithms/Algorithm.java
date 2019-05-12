@@ -24,12 +24,12 @@ public abstract class Algorithm {
         this.sorting = sorting;
     }
 
-    List<String> getPossibleMoves(Color playerColor) {
+    List<String> getPossibleMoves() {
         List<String> possibleMoves = game.getPossibleMoves();
 
         if(sorting) {
             try {
-                sortPossibleMoves(possibleMoves, playerColor);
+                sortPossibleMoves(possibleMoves);
             } catch (MoveNotPossibleException e) {
                 e.printStackTrace();
             }
@@ -38,13 +38,13 @@ public abstract class Algorithm {
         return possibleMoves;
     }
 
-    private void sortPossibleMoves(List<String> possibleMoves, Color playerColor) throws MoveNotPossibleException {
+    private void sortPossibleMoves(List<String> possibleMoves) throws MoveNotPossibleException {
         List<Double> coeffs = new ArrayList<>();
 
         for(String move : possibleMoves) {
             GameInterface tempGame = game.getCopy();
             tempGame.move(move);
-            coeffs.add(gameHeuristic.getResultCoefficient(tempGame, playerColor));
+            coeffs.add(gameHeuristic.getResultCoefficient(tempGame));
         }
 
         CustomUtils.sortArray(possibleMoves, coeffs);
@@ -56,7 +56,7 @@ public abstract class Algorithm {
         return this.numOfInstructions;
     }
 
-    double evaluate(Color playerColor) {
-        return gameHeuristic.getResultCoefficient(game, playerColor);
+    double evaluate() {
+        return gameHeuristic.getResultCoefficient(game);
     }
 }

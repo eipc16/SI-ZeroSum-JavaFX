@@ -29,7 +29,7 @@ public class AlternativeGameHeuristic extends GameHeuristic {
     }
 
     private double availableMovesCoefficient(GameInterface game) {
-        return (availableMoves(game, Color.WHITE) - availableMoves(game, Color.BLACK));
+        return (availableMoves(game, game.getActivePlayer()) - availableMoves(game, game.getEnemyPlayer()));
     }
 
     private double menInGameCeofficient(GameInterface game) {
@@ -37,11 +37,11 @@ public class AlternativeGameHeuristic extends GameHeuristic {
     }
 
     private double menDifferenceCoefficient(GameInterface game) {
-        return MAN_FACTOR * (Math.max(game.getGameModel().getFields(Color.WHITE).size(), MIN_MEN_FACTOR) - Math.max(game.getGameModel().getFields(Color.BLACK).size(), MIN_MEN_FACTOR));
+        return MAN_FACTOR * (Math.max(game.getGameModel().getFields(game.getActivePlayer()).size(), MIN_MEN_FACTOR) - Math.max(game.getGameModel().getFields(game.getEnemyPlayer()).size(), MIN_MEN_FACTOR));
     }
 
     @Override
-    public double getResultCoefficient(GameInterface game, Color playerColor) {
-        return playerTurn(playerColor) * (menDifferenceCoefficient(game) + availableMovesCoefficient(game)) / menInGameCeofficient(game);
+    public double getResultCoefficient(GameInterface game) {
+        return (menDifferenceCoefficient(game) + availableMovesCoefficient(game)) / menInGameCeofficient(game);
     }
 }

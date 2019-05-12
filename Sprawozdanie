@@ -78,7 +78,6 @@
     
     \begin{lstlisting}[escapeinside={(*}{*)}]
     // Algorytm min-max
-    
     function getbestmove()
         for move in possible_moves
             result = minmax(move, max_depth, true)
@@ -89,10 +88,13 @@
         
     function minmax(move, depth, maximize)
         make_move(move)
+        
         if depth < 1
             return evaluate()
         if game_finished
-            return (*$\infty$*)
+            if draw
+                return 0
+            return winner ? (*$\infty$*) : -(*$\infty$*)
             
         for next_move in possible_moves
             result = minmax(next_move, depth - 1, !maximize)
@@ -119,7 +121,9 @@
         if depth < 1
             return evaluate()
         if game_finished
-            return (*$\infty$*)
+            if draw
+                return 0
+            return winner ? (*$\infty$*) : -(*$\infty$*)
         for next_move in possible_moves
             result = alfabeta(next_move, depth - 1, !maximize, alfa, beta)
             if(maximize)

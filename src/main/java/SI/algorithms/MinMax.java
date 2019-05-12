@@ -24,7 +24,7 @@ public class MinMax extends Algorithm {
         double bestCoeff = -Double.MAX_VALUE;
 
         Color playerColor = game.getActivePlayer();
-        List<String> possibleMoves = getPossibleMoves(playerColor);
+        List<String> possibleMoves = getPossibleMoves();
 
         for(String move : possibleMoves) {
             moveCoeff = calculateCoeff(game.getCopy(), move, 0, playerColor);
@@ -48,7 +48,7 @@ public class MinMax extends Algorithm {
             this.numOfInstructions++;
 
             if(depth >= depthLimit) {
-                return evaluate(playerColor);
+                return evaluate();
 
             }
 
