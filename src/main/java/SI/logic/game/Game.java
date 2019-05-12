@@ -4,6 +4,7 @@ import SI.enums.Color;
 import SI.enums.GamePhase;
 import SI.enums.GameResult;
 import SI.exceptions.*;
+import SI.logic.heuristics.GameHeuristicInterface;
 import SI.models.GameModel;
 
 import java.util.*;
@@ -32,12 +33,18 @@ public class Game implements GameInterface {
     private Map<Color, String> previousMove;
     private Map<Color, Set<Integer>> playerMills;
 
+    private Map<Color, GameHeuristicInterface> playerHeuristics;
+
     private List<String> possibleMoves;
 
     private List<Game> gameStateHistory;
 
     public Game(GameModel gameModel) {
         this.model = gameModel;
+
+        this.playerHeuristics = new HashMap<>();
+        this.playerHeuristics.put(Color.WHITE, null);
+        this.playerHeuristics.put(Color.BLACK, null);
     }
 
     public Game(Game game) {
@@ -53,12 +60,21 @@ public class Game implements GameInterface {
         this.moveCount = game.moveCount;
         this.previousMove = new HashMap<>(game.previousMove);
         this.possibleMoves = game.possibleMoves == null ? null : new ArrayList<>(game.possibleMoves);
+        this.playerHeuristics = game.playerHeuristics;
 
         this.playerMills = new HashMap<>();
         this.playerMills.put(Color.BLACK, game.playerMills.get(Color.BLACK));
         this.playerMills.put(Color.WHITE, game.playerMills.get(Color.WHITE));
 
         this.gameStateHistory = new ArrayList<>(game.gameStateHistory);
+    }
+
+    public void setBlackPlayerHeuristic(GameHeuristicInterface heuristic) {
+        this.playerHeuristics.put(Color.BLACK, heuristic);
+    }
+
+    public void setWhitePlayerHeuristic(GameHeuristicInterface heuristic) {
+        this.playerHeuristics.put(Color.WHITE, heuristic);
     }
 
     @Override
@@ -152,11 +168,12 @@ public class Game implements GameInterface {
 
         updateState();
         updateGameResult();
+        saveGameState();
     }
 
     @Override
-    public Color getActivePlayerColor() {
-        return currentPlayerColor;
+    public double evaluate() {
+        return playerHeuristics.get(currentPlayerColor).getResultCoefficient(this);
     }
 
     // Todo: Change error throwing for previous move exception
@@ -358,6 +375,10 @@ public class Game implements GameInterface {
         }
     }
 
+    private void saveGameState() {
+        this.gameStateHistory.add(this.getCopy());
+    }
+
     private void initPlayers() {
         if(Math.random() < 0.5) {
             this.currentPlayerColor = Color.WHITE;
@@ -390,8 +411,14 @@ public class Game implements GameInterface {
         return phase;
     }
 
+    @Override
     public Color getActivePlayer() {
         return currentPlayerColor;
+    }
+
+    @Override
+    public Color getEnemyPlayer() {
+        return enemyColor;
     }
 
     public String getWinner() {
@@ -413,4 +440,10 @@ public class Game implements GameInterface {
     public int getRemovingMovesLeft() {
         return removingMovesLeft;
     }
+
+    public boolean isFinished() {
+        return phase.equals(GamePhase.FINISHED);
+    }
+
+
 }

@@ -2,7 +2,6 @@ package SI.algorithms;
 
 import SI.utils.CustomUtils;
 import SI.enums.Color;
-import SI.enums.GamePhase;
 import SI.exceptions.*;
 import SI.logic.game.GameInterface;
 import SI.logic.heuristics.GameHeuristicInterface;
@@ -12,13 +11,11 @@ import java.util.List;
 
 public class AlphaBetaPruning implements AlgorithmInterface {
     private GameInterface game;
-    private GameHeuristicInterface gameHeuristic;
     private int depthLimit;
 
     public AlphaBetaPruning(GameInterface game, GameHeuristicInterface gameHeuristic, int depthLimit) {
         this.game = game;
         this.depthLimit = depthLimit;
-        this.gameHeuristic = gameHeuristic;
     }
 
     @Override
@@ -29,7 +26,7 @@ public class AlphaBetaPruning implements AlgorithmInterface {
         double alpha = -Double.MAX_VALUE;
         double beta = Double.MAX_VALUE;
 
-        Color playerColor = game.getActivePlayerColor();
+        Color playerColor = game.getActivePlayer();
         List<String> possibleMoves = game.getPossibleMoves();
 
         try {
@@ -39,7 +36,7 @@ public class AlphaBetaPruning implements AlgorithmInterface {
         }
 
         for(String move : possibleMoves) {
-            alpha = calculateCoeff(move, 0, playerColor, alpha, beta);
+            alpha = calculateCoeff(game.getCopy(), move, 0, true, alpha, beta);
 
             if (bestMove == null || alpha > bestResult) {
                 bestMove = move;
@@ -55,67 +52,55 @@ public class AlphaBetaPruning implements AlgorithmInterface {
         GameInterface game = this.game.getCopy();
         for(String move : possibleMoves) {
             game.move(String.format("%s", move));
-            coeffs.add(gameHeuristic.getResultCoefficient(game, playerColor));
-            //
+            coeffs.add(game.evaluate());
         }
 
         CustomUtils.sortArray(possibleMoves, coeffs);
     }
 
-    private double calculateCoeff(String move, int depth, Color playerColor, double alpha, double beta) {
-        double bestResult;
+    private double calculateCoeff(GameInterface game, String move, int depth, boolean maximize, double alpha, double beta) {
+        double bestResult, result;
 
         try {
             game.move(move);
 
-            if(depth >= depthLimit) {
-                bestResult = gameHeuristic.getResultCoefficient(game, playerColor);
 
-            } else if(!game.getState().equals(GamePhase.FINISHED)) {
-
-                double result;
-                boolean maximize = game.getActivePlayerColor().equals(playerColor);
-
-                bestResult = maximize ? -Double.MAX_VALUE : Double.MAX_VALUE;
-
-                for(String nextMove : game.getPossibleMoves()) {
-                    result = calculateCoeff(nextMove, depth + 1, playerColor, alpha, beta);
-
-                    if(maximize) {
-                        alpha = result;
-                        if (result > bestResult) {
-                            bestResult = result;
-                        }
-                    } else {
-                        beta = result;
-                        if (result < bestResult) {
-                            bestResult = result;
-                        }
-                    }
-
-                    if (alpha >= beta)
-                        break;
-                }
-
-            } else {
-
-                if(game.getWinner().equals(game.getActivePlayer())) {
-                    bestResult = Double.MAX_VALUE;
-                } else if (game.getWinner().equals(Color.NONE.name())) {
-                    bestResult = 0;
-                } else {
-                    bestResult = -Double.MAX_VALUE;
-                }
-
+            if(game.isFinished() || depth < 1 || game.getPossibleMoves().size() == 0) {
+                return game.evaluate();
             }
 
-        } catch (Exception e) {
+            bestResult = maximize ? -Double.MAX_VALUE : Double.MAX_VALUE;
+
+            for(String nextMove : game.getPossibleMoves()) {
+                result = calculateCoeff(game.getCopy(), nextMove, depth - 1, !maximize, alpha, beta);
+                bestResult = newBestResult(bestResult, result, maximize);
+
+                if(maximize && result > bestResult) {
+                    alpha = result;
+                } else if(!maximize && result < bestResult) {
+                    beta = result;
+                }
+
+                if(alpha >= beta) {
+                    break;
+                }
+            }
+
+            return bestResult;
+
+        } catch (MoveNotPossibleException e) {
             e.printStackTrace();
-            bestResult = -Double.MAX_VALUE;
+            return -Double.MAX_VALUE;
         }
-
-        return bestResult;
-
     }
+
+    private double newBestResult(double currentBest, double newResult, boolean maximize) {
+        if(maximize) {
+            return Math.max(currentBest, newResult);
+        } else {
+            return Math.min(currentBest, newResult);
+        }
+    }
+
 
 }

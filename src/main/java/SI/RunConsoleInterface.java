@@ -6,6 +6,7 @@ import SI.enums.Color;
 import SI.enums.GamePhase;
 import SI.exceptions.*;
 import SI.logic.heuristics.AlternativeGameHeuristic;
+import SI.logic.heuristics.GameHeuristic;
 import SI.logic.heuristics.GameHeuristicInterface;
 import SI.logic.game.Game;
 import SI.logic.game.GameInterface;
@@ -19,12 +20,15 @@ public class RunConsoleInterface {
 
         GameModel model = new NineMensMorris(false);
         GameInterface game = new Game(model);
-        GameHeuristicInterface gameAnalytics = new AlternativeGameHeuristic();
+        GameHeuristicInterface heuristicWhite = new AlternativeGameHeuristic();
+        GameHeuristicInterface heuristicBlack = new AlternativeGameHeuristic();
+        game.setBlackPlayerHeuristic(heuristicBlack);
+        game.setWhitePlayerHeuristic(heuristicWhite);
 
         //AlgorithmInterface white = new AlphaBetaPruning(game, gameAnalytics, 1);
         //AlgorithmInterface black = new AlphaBetaPruning(game, gameAnalytics, 1);
-        AlgorithmInterface white = new MinMax(game, gameAnalytics, 1);
-        AlgorithmInterface black = new MinMax(game, gameAnalytics, 1);
+        AlgorithmInterface white = new MinMax(game,  4);
+        AlgorithmInterface black = new MinMax(game,  1);
         AlgorithmInterface algorithm;
         game.init();
 
@@ -40,10 +44,10 @@ public class RunConsoleInterface {
             System.out.println("\n" + game.getGameModel());
             System.out.println("---------------");
             System.out.print(String.format("Phase: %s | Current player: %s\n", game.getStateName(), game.getActivePlayer()));
-            System.out.println(String.format("Moves since last mill: %d | Total moves: %d", game.getMovesSinceMill(), ((Game) game).getTotalMoves()));
+            System.out.println(String.format("Moves since last mill: %d | Total moves: %d", game.getMovesSinceMill(), (game.getTotalMoves())));
 
             if(!game.getState().equals(GamePhase.FINISHED)) {
-                if(game.getActivePlayerColor().equals(Color.WHITE)) {
+                if(game.getActivePlayer().equals(Color.WHITE)) {
                     algorithm = white;
                 } else {
                     algorithm = black;
@@ -53,8 +57,8 @@ public class RunConsoleInterface {
                 System.out.print(String.format("Placing moves: %d | Removing moves: %s\n", game.getPlacingMovesLeft(), game.getRemovingMovesLeft()));
                 System.out.println(String.format("Possible moves: %s", game.getPossibleMoves()));
                 String best = algorithm.getNextBestMove();
-                //System.out.println(String.format("Best move: %s", best));
-                //System.out.print("\nNext move: ");
+                System.out.println(String.format("Best move: %s | Coeff: %.4f", best, game.evaluate()));
+                System.out.print("\nNext move: ");
                 //instruction = scanner.nextLine();
 
                 try {

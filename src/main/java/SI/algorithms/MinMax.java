@@ -1,19 +1,15 @@
 package SI.algorithms;
 
-import SI.enums.Color;
-import SI.enums.GamePhase;
-import SI.logic.heuristics.GameHeuristicInterface;
+import SI.exceptions.MoveNotPossibleException;
 import SI.logic.game.GameInterface;
 
 public class MinMax implements AlgorithmInterface {
 
     private GameInterface game;
-    private GameHeuristicInterface gameAnalytics;
     private int depthLimit;
 
-    public MinMax(GameInterface game, GameHeuristicInterface gameAnalytics, int depthLimit) {
+    public MinMax(GameInterface game, int depthLimit) {
         this.game = game;
-        this.gameAnalytics = gameAnalytics;
         this.depthLimit = depthLimit;
     }
 
@@ -25,7 +21,7 @@ public class MinMax implements AlgorithmInterface {
         double bestCoeff = -Double.MAX_VALUE;
 
         for(String move : game.getPossibleMoves()) {
-            moveCoeff = calculateCoeff(game.getCopy(), move, 0, game.getActivePlayerColor());
+            moveCoeff = calculateCoeff(game.getCopy(), move, depthLimit, true);
 
             if(bestMove == null || moveCoeff > bestCoeff) {
                 bestMove = move;
@@ -36,54 +32,37 @@ public class MinMax implements AlgorithmInterface {
         return bestMove;
     }
 
-    private double calculateCoeff(GameInterface game, String move, int depth, Color startPlayerColor) {
-        double bestResult;
+    private double calculateCoeff(GameInterface game, String move, int depth, boolean maximize) {
+        double bestResult, result;
 
         try {
             game.move(move);
 
-            if(depth >= depthLimit) {
-                bestResult = gameAnalytics.getResultCoefficient(game, startPlayerColor);
 
-            } else if(!game.getState().equals(GamePhase.FINISHED)) {
-
-                double result;
-                boolean maximize = game.getActivePlayerColor().equals(startPlayerColor);
-
-                bestResult = maximize ? -Double.MAX_VALUE : Double.MAX_VALUE;
-
-                for(String nextMove : game.getPossibleMoves()) {
-                    result = calculateCoeff(game.getCopy(), nextMove, depth + 1, startPlayerColor);
-
-                    if(maximize) {
-                        if (result > bestResult) {
-                            bestResult = result;
-                        }
-                    } else {
-                        if (result < bestResult) {
-                            bestResult = result;
-                        }
-                    }
-                }
-
-            } else {
-
-                if(game.getWinner().equals(startPlayerColor)) {
-                    bestResult = Double.MAX_VALUE;
-                } else if (game.getWinner().equals(Color.NONE.name())) {
-                    bestResult = 0;
-                } else {
-                    bestResult = -Double.MAX_VALUE;
-                }
-
+            if(game.isFinished() || depth < 1 || game.getPossibleMoves().size() == 0) {
+                return game.evaluate();
             }
 
-        } catch (Exception e) {
+            bestResult = maximize ? -Double.MAX_VALUE : Double.MAX_VALUE;
+
+            for(String nextMove : game.getPossibleMoves()) {
+                result = calculateCoeff(game.getCopy(), nextMove, depth - 1, !maximize);
+                bestResult = newBestResult(bestResult, result, maximize);
+            }
+
+            return bestResult;
+
+        } catch (MoveNotPossibleException e) {
             e.printStackTrace();
-            bestResult = -Double.MAX_VALUE;
+            return -Double.MAX_VALUE;
         }
+    }
 
-        return bestResult;
-
+    private double newBestResult(double currentBest, double newResult, boolean maximize) {
+        if(maximize) {
+            return Math.max(currentBest, newResult);
+        } else {
+            return Math.min(currentBest, newResult);
+        }
     }
 }
