@@ -1,13 +1,14 @@
 package SI;
 
-import SI.algorithms.AlgorithmInterface;
+import SI.algorithms.Algorithm;
+import SI.algorithms.AlphaBetaPruning;
 import SI.algorithms.MinMax;
 import SI.enums.Color;
 import SI.enums.GamePhase;
 import SI.exceptions.*;
 import SI.logic.heuristics.AlternativeGameHeuristic;
+import SI.logic.heuristics.NumOfMansHeuristic;
 import SI.logic.heuristics.GameHeuristic;
-import SI.logic.heuristics.GameHeuristicInterface;
 import SI.logic.game.Game;
 import SI.logic.game.GameInterface;
 import SI.models.GameModel;
@@ -20,16 +21,14 @@ public class RunConsoleInterface {
 
         GameModel model = new NineMensMorris(false);
         GameInterface game = new Game(model);
-        GameHeuristicInterface heuristicWhite = new AlternativeGameHeuristic();
-        GameHeuristicInterface heuristicBlack = new AlternativeGameHeuristic();
-        game.setBlackPlayerHeuristic(heuristicBlack);
-        game.setWhitePlayerHeuristic(heuristicWhite);
+        GameHeuristic heuristicWhite = new NumOfMansHeuristic();
+        GameHeuristic heuristicBlack = new AlternativeGameHeuristic();
 
-        //AlgorithmInterface white = new AlphaBetaPruning(game, gameAnalytics, 1);
-        //AlgorithmInterface black = new AlphaBetaPruning(game, gameAnalytics, 1);
-        AlgorithmInterface white = new MinMax(game,  2);
-        AlgorithmInterface black = new MinMax(game,  2);
-        AlgorithmInterface algorithm;
+        Algorithm white = new AlphaBetaPruning(game, 1, heuristicWhite, true);
+        Algorithm black = new AlphaBetaPruning(game, 6, heuristicBlack, false);
+        //Algorithm black = new MinMax(game,  2, heuristicBlack, false);
+        //Algorithm black = new MinMax(game,  3);
+        Algorithm algorithm;
         game.init();
 
         Scanner scanner = new Scanner(System.in);
@@ -47,17 +46,20 @@ public class RunConsoleInterface {
             System.out.println(String.format("Moves since last mill: %d | Total moves: %d", game.getMovesSinceMill(), (game.getTotalMoves())));
 
             if(!game.getState().equals(GamePhase.FINISHED)) {
+                String best;
                 if(game.getActivePlayer().equals(Color.WHITE)) {
-                    algorithm = white;
+                    best = white.getNextBestMove();
                 } else {
-                    algorithm = black;
+                    //System.out.print("Next move: ");
+                    //best = scanner.nextLine();
+                    best = black.getNextBestMove();
                 }
 
                 startMoveTime = System.currentTimeMillis();
                 System.out.print(String.format("Placing moves: %d | Removing moves: %s\n", game.getPlacingMovesLeft(), game.getRemovingMovesLeft()));
                 System.out.println(String.format("Possible moves: %s", game.getPossibleMoves()));
-                String best = algorithm.getNextBestMove();
-                System.out.println(String.format("Best move: %s | Coeff: %.4f", best, game.evaluate()));
+                //String best = algorithm.getNextBestMove();
+                System.out.println(String.format("Best move: %s", best));
                 System.out.print("\nNext move: ");
                 //instruction = scanner.nextLine();
 
@@ -79,6 +81,10 @@ public class RunConsoleInterface {
                 System.out.println("Winner: " + game.getWinner());
                 System.out.println("Moves: " + ((Game) game).getTotalMoves());
                 System.out.println(String.format("Total time elapsed: %.4f seconds", totalTime));
+                System.out.println(String.format("Black moves: %s", (game.getPlayerMoveCount(Color.BLACK))));
+                System.out.println(String.format("White moves: %s", (game.getPlayerMoveCount(Color.WHITE))));
+                System.out.println(String.format("Black searched nodes: %s", (black.getNumOfInstructions())));
+                System.out.println(String.format("White searched nodes: %s", (white.getNumOfInstructions())));
                 System.out.println("------------------------------");
                 break;
             }

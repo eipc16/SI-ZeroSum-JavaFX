@@ -4,11 +4,11 @@ import SI.enums.Color;
 import SI.enums.GamePhase;
 import SI.enums.GameResult;
 import SI.exceptions.*;
-import SI.logic.heuristics.GameHeuristicInterface;
 import SI.models.GameModel;
 
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Game implements GameInterface {
 
@@ -32,8 +32,9 @@ public class Game implements GameInterface {
 
     private Map<Color, String> previousMove;
     private Map<Color, Set<Integer>> playerMills;
+    private Map<Color, List<String>> moveHistory;
 
-    private Map<Color, GameHeuristicInterface> playerHeuristics;
+    private Map<Color, Integer> playerMoves;
 
     private List<String> possibleMoves;
 
@@ -42,9 +43,9 @@ public class Game implements GameInterface {
     public Game(GameModel gameModel) {
         this.model = gameModel;
 
-        this.playerHeuristics = new HashMap<>();
-        this.playerHeuristics.put(Color.WHITE, null);
-        this.playerHeuristics.put(Color.BLACK, null);
+        this.playerMoves = new HashMap<>();
+        this.playerMoves.put(Color.WHITE, 0);
+        this.playerMoves.put(Color.BLACK, 0);
     }
 
     public Game(Game game) {
@@ -60,21 +61,18 @@ public class Game implements GameInterface {
         this.moveCount = game.moveCount;
         this.previousMove = new HashMap<>(game.previousMove);
         this.possibleMoves = game.possibleMoves == null ? null : new ArrayList<>(game.possibleMoves);
-        this.playerHeuristics = game.playerHeuristics;
 
         this.playerMills = new HashMap<>();
-        this.playerMills.put(Color.BLACK, game.playerMills.get(Color.BLACK));
-        this.playerMills.put(Color.WHITE, game.playerMills.get(Color.WHITE));
+        this.playerMills.put(Color.BLACK, new HashSet<>(game.playerMills.get(Color.BLACK)));
+        this.playerMills.put(Color.WHITE, new HashSet<>(game.playerMills.get(Color.WHITE)));
+
+        this.moveHistory = new HashMap<>();
+        this.moveHistory.put(Color.BLACK, new ArrayList<>(game.moveHistory.get(Color.BLACK)));
+        this.moveHistory.put(Color.WHITE, new ArrayList<>(game.moveHistory.get(Color.WHITE)));
 
         this.gameStateHistory = new ArrayList<>(game.gameStateHistory);
-    }
 
-    public void setBlackPlayerHeuristic(GameHeuristicInterface heuristic) {
-        this.playerHeuristics.put(Color.BLACK, heuristic);
-    }
-
-    public void setWhitePlayerHeuristic(GameHeuristicInterface heuristic) {
-        this.playerHeuristics.put(Color.WHITE, heuristic);
+        this.playerMoves = new HashMap<>(game.playerMoves);
     }
 
     @Override
@@ -96,6 +94,10 @@ public class Game implements GameInterface {
         this.playerMills = new HashMap<>();
         playerMills.put(Color.WHITE, new HashSet<>());
         playerMills.put(Color.BLACK, new HashSet<>());
+
+        this.moveHistory = new HashMap<>();
+        this.moveHistory.put(Color.WHITE, new ArrayList<>());
+        this.moveHistory.put(Color.BLACK, new ArrayList<>());
 
         this.gameStateHistory = new ArrayList<>();
         this.previousMove = new HashMap<>();
@@ -123,7 +125,6 @@ public class Game implements GameInterface {
                 }
 
                 place(fields[0]);
-                this.moveCount++;
                 movesWithoutMill++;
                 placingMovesLeft--;
                 removingMovesLeft = countActiveMills();
@@ -143,7 +144,6 @@ public class Game implements GameInterface {
                 }
 
                 move(fields[0], fields[1]);
-                this.moveCount++;
                 movesWithoutMill++;
                 removingMovesLeft = countActiveMills();
                 this.previousMove.put(currentPlayerColor, fields[0] + MOVE_SEPARATOR + fields[1]);
@@ -158,22 +158,20 @@ public class Game implements GameInterface {
                 }
 
                 remove(fields[0]);
-                this.moveCount++;
                 removingMovesLeft--;
 
                 break;
         }
 
+        moveHistory.get(currentPlayerColor).add(moveCount + ". " + command);
         this.possibleMoves = null;
+
+        this.moveCount++;
+        this.playerMoves.put(currentPlayerColor, this.playerMoves.get(currentPlayerColor) + 1);
 
         updateState();
         updateGameResult();
         saveGameState();
-    }
-
-    @Override
-    public double evaluate() {
-        return playerHeuristics.get(currentPlayerColor).getResultCoefficient(this);
     }
 
     // Todo: Change error throwing for previous move exception
@@ -380,13 +378,8 @@ public class Game implements GameInterface {
     }
 
     private void initPlayers() {
-        if(Math.random() < 0.5) {
-            this.currentPlayerColor = Color.WHITE;
-            this.enemyColor = Color.BLACK;
-        } else {
-            this.currentPlayerColor = Color.BLACK;
-            this.enemyColor = Color.WHITE;
-        }
+        this.currentPlayerColor = Color.WHITE;
+        this.enemyColor = Color.BLACK;
     }
 
     private void swapPlayers() {
@@ -401,6 +394,10 @@ public class Game implements GameInterface {
 
     public int getTotalMoves() {
         return this.moveCount;
+    }
+
+    public int getPlayerMoveCount(Color playerColor) {
+        return this.playerMoves.get(playerColor);
     }
 
     public String getStateName() {
@@ -421,8 +418,8 @@ public class Game implements GameInterface {
         return enemyColor;
     }
 
-    public String getWinner() {
-        return winnerColor.name();
+    public Color getWinner() {
+        return winnerColor;
     }
 
     public String getResult() {
@@ -445,5 +442,12 @@ public class Game implements GameInterface {
         return phase.equals(GamePhase.FINISHED);
     }
 
+    public List<String> getPlayerMovesHistory(Color color) {
+        return moveHistory.get(color);
+    }
+
+    public int getPlayerMans(Color color) {
+        return model.getFields(color).size();
+    }
 
 }

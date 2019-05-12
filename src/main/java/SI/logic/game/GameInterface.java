@@ -3,7 +3,6 @@ package SI.logic.game;
 import SI.enums.Color;
 import SI.enums.GamePhase;
 import SI.exceptions.*;
-import SI.logic.heuristics.GameHeuristicInterface;
 import SI.models.GameModel;
 
 import java.util.List;
@@ -12,19 +11,18 @@ public interface GameInterface {
 
     void init();
     void move(String command) throws MoveNotPossibleException;
-    void setBlackPlayerHeuristic(GameHeuristicInterface heuristic);
-    void setWhitePlayerHeuristic(GameHeuristicInterface heuristic);
 
     GamePhase getState();
 
     String getStateName();
-    String getWinner();
+    Color getWinner();
     String getResult();
 
     Color getActivePlayer();
     Color getEnemyPlayer();
 
     List<String> getPossibleMoves();
+    List<String> getPlayerMovesHistory(Color color);
 
     int getPlacingMovesLeft();
     int getMovesSinceMill();
@@ -35,6 +33,8 @@ public interface GameInterface {
 
     Game getCopy();
 
-    double evaluate();
     boolean isFinished();
+
+    int getPlayerMoveCount(Color playerColor);
+    int getPlayerMans(Color playerColor);
 }

@@ -1,20 +1,18 @@
 package SI.algorithms;
 
-import SI.utils.CustomUtils;
 import SI.enums.Color;
 import SI.exceptions.*;
 import SI.logic.game.GameInterface;
-import SI.logic.heuristics.GameHeuristicInterface;
+import SI.logic.heuristics.GameHeuristic;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class AlphaBetaPruning implements AlgorithmInterface {
-    private GameInterface game;
+public class AlphaBetaPruning extends Algorithm {
+
     private int depthLimit;
 
-    public AlphaBetaPruning(GameInterface game, GameHeuristicInterface gameHeuristic, int depthLimit) {
-        this.game = game;
+    public AlphaBetaPruning(GameInterface game, int depthLimit, GameHeuristic gameHeuristic, boolean sorting) {
+        super(game, gameHeuristic, sorting);
         this.depthLimit = depthLimit;
     }
 
@@ -27,16 +25,10 @@ public class AlphaBetaPruning implements AlgorithmInterface {
         double beta = Double.MAX_VALUE;
 
         Color playerColor = game.getActivePlayer();
-        List<String> possibleMoves = game.getPossibleMoves();
-
-        try {
-            sortPossibleMoves(possibleMoves, playerColor);
-        } catch (MoveNotPossibleException e) {
-            e.printStackTrace();
-        }
+        List<String> possibleMoves = getPossibleMoves(playerColor);
 
         for(String move : possibleMoves) {
-            alpha = calculateCoeff(game.getCopy(), move, 0, true, alpha, beta);
+            alpha = calculateCoeff(game.getCopy(), move, 0, playerColor, alpha, beta);
 
             if (bestMove == null || alpha > bestResult) {
                 bestMove = move;
@@ -44,45 +36,53 @@ public class AlphaBetaPruning implements AlgorithmInterface {
             }
         }
 
+        System.out.println(game.getActivePlayer() + " Result: " + bestResult);
+
         return bestMove;
     }
 
-    private void sortPossibleMoves(List<String> possibleMoves, Color playerColor) throws MoveNotPossibleException {
-        List<Double> coeffs = new ArrayList<>();
-        GameInterface game = this.game.getCopy();
-        for(String move : possibleMoves) {
-            game.move(String.format("%s", move));
-            coeffs.add(game.evaluate());
-        }
-
-        CustomUtils.sortArray(possibleMoves, coeffs);
-    }
-
-    private double calculateCoeff(GameInterface game, String move, int depth, boolean maximize, double alpha, double beta) {
+    private double calculateCoeff(GameInterface game, String move, int depth, Color playerColor, double alpha, double beta) {
         double bestResult, result;
 
         try {
             game.move(move);
+            this.numOfInstructions++;
 
+            if(depth >= depthLimit) {
+                return evaluate(playerColor);
 
-            if(game.isFinished() || depth < 1 || game.getPossibleMoves().size() == 0) {
-                return game.evaluate();
             }
 
-            bestResult = maximize ? -Double.MAX_VALUE : Double.MAX_VALUE;
+            if(game.isFinished()) {
+                if(game.getWinner().equals(playerColor)) {
+                    return Double.MAX_VALUE / depth;
+                } else if (game.getWinner().equals(Color.NONE)) {
+                    return 0;
+                } else {
+                    return -Double.MAX_VALUE / depth;
+                }
+            }
+
+            boolean maximize = game.getActivePlayer().equals(playerColor);
+            bestResult = maximize ? alpha : beta;
 
             for(String nextMove : game.getPossibleMoves()) {
-                result = calculateCoeff(game.getCopy(), nextMove, depth - 1, !maximize, alpha, beta);
-                bestResult = newBestResult(bestResult, result, maximize);
+                result = calculateCoeff(game.getCopy(), nextMove, depth + 1, playerColor, alpha, beta);
 
-                if(maximize && result > bestResult) {
-                    alpha = result;
-                } else if(!maximize && result < bestResult) {
-                    beta = result;
+                if(maximize) {
+                    if (result > bestResult) {
+                        alpha = result;
+                        bestResult = result;
+                    }
+                } else {
+                    if(result < bestResult) {
+                        beta = result;
+                        bestResult = result;
+                    }
                 }
 
                 if(alpha >= beta) {
-                    break;
+                    return bestResult;
                 }
             }
 
@@ -93,14 +93,4 @@ public class AlphaBetaPruning implements AlgorithmInterface {
             return -Double.MAX_VALUE;
         }
     }
-
-    private double newBestResult(double currentBest, double newResult, boolean maximize) {
-        if(maximize) {
-            return Math.max(currentBest, newResult);
-        } else {
-            return Math.min(currentBest, newResult);
-        }
-    }
-
-
 }

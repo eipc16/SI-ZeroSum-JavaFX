@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/src/main/java/SI/logic/game/Game.java" line="365" />
+    <bookmark url="file://$PROJECT_DIR$/src/main/java/SI/logic/game/Game.java" line="363" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7de50ebf-17df-4edc-830f-752271deda35" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/SI/algorithms/Algorithm.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/SI/logic/heuristics/NumOfMansHeuristic.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/SI/RunConsoleInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/SI/RunConsoleInterface.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/SI/algorithms/AlgorithmInterface.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/SI/algorithms/AlphaBetaPruning.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/SI/algorithms/AlphaBetaPruning.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/SI/algorithms/MinMax.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/SI/algorithms/MinMax.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/SI/logic/game/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/SI/logic/game/Game.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/SI/logic/game/GameInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/SI/logic/game/GameInterface.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/SI/logic/heuristics/AlternativeGameHeuristic.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/SI/logic/heuristics/AlternativeGameHeuristic.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/SI/logic/heuristics/GameHeuristic.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/SI/logic/heuristics/GameHeuristic.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/SI/logic/heuristics/GameHeuristicInterface.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/SI/RunConsoleInterface.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/SI/RunConsoleInterface.class" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -46,15 +54,14 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/SI/models/GameModel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="207">
-              <caret line="46" column="36" selection-start-line="46" selection-start-column="36" selection-end-line="46" selection-end-column="36" />
+            <state relative-caret-position="192">
+              <caret line="114" selection-start-line="114" selection-end-line="114" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#1714#1715#0" expanded="true" />
                 <element signature="e#1763#1764#0" expanded="true" />
                 <element signature="e#3262#3263#0" expanded="true" />
                 <element signature="e#3296#3297#0" expanded="true" />
-                <element signature="e#3345#3346#0" expanded="true" />
                 <element signature="e#3392#3393#0" expanded="true" />
                 <element signature="e#3435#3436#0" expanded="true" />
                 <element signature="e#3463#3464#0" expanded="true" />
@@ -66,22 +73,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/SI/algorithms/MinMax.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/SI/RunConsoleInterface.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
-              <caret line="38" column="28" lean-forward="true" selection-start-line="38" selection-start-column="28" selection-end-line="38" selection-end-column="28" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/SI/logic/heuristics/GameHeuristic.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="298">
-              <caret line="19" column="51" selection-start-line="19" selection-start-column="51" selection-end-line="19" selection-end-column="51" />
+            <state relative-caret-position="259">
+              <caret line="30" column="28" lean-forward="true" selection-start-line="30" selection-start-column="28" selection-end-line="30" selection-end-column="28" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -90,10 +85,22 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/SI/RunConsoleInterface.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/SI/algorithms/MinMax.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="288">
-              <caret line="30" column="56" lean-forward="true" selection-start-line="30" selection-start-column="56" selection-end-line="30" selection-end-column="56" />
+            <state relative-caret-position="342">
+              <caret line="22" column="25" lean-forward="true" selection-start-line="22" selection-start-column="25" selection-end-line="22" selection-end-column="25" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/SI/logic/heuristics/NumOfMansHeuristic.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="270">
+              <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -104,8 +111,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/SI/algorithms/AlphaBetaPruning.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="14" lean-forward="true" selection-start-line="14" selection-end-line="14" />
+            <state relative-caret-position="432">
+              <caret line="42" lean-forward="true" selection-start-line="42" selection-end-line="42" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -114,10 +121,28 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/SI/algorithms/AlgorithmInterface.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/SI/logic/heuristics/GameHeuristic.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="36">
-              <caret line="2" column="17" selection-start-line="2" selection-start-column="17" selection-end-line="2" selection-end-column="17" />
+            <state relative-caret-position="162">
+              <caret line="9" selection-start-line="9" selection-end-line="9" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#313#314#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/SI/algorithms/Algorithm.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="830">
+              <caret line="59" selection-start-line="59" selection-end-line="59" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#1619#1620#0" expanded="true" />
+                <element signature="e#1737#1738#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -125,42 +150,16 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/SI/logic/game/Game.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
+            <state relative-caret-position="90">
               <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#2603#2604#0" expanded="true" />
-                <element signature="e#2640#2641#0" expanded="true" />
-                <element signature="e#5737#5738#0" expanded="true" />
-                <element signature="e#5827#5828#0" expanded="true" />
-                <element signature="e#7477#7478#0" expanded="true" />
-                <element signature="e#7516#7517#0" expanded="true" />
-                <element signature="e#7571#7572#0" expanded="true" />
-                <element signature="e#7638#7639#0" expanded="true" />
-                <element signature="e#10045#10046#0" expanded="true" />
-                <element signature="e#10110#10111#0" expanded="true" />
-                <element signature="e#12142#12143#0" expanded="true" />
-                <element signature="e#12199#12200#0" expanded="true" />
-                <element signature="e#12830#12831#0" expanded="true" />
-                <element signature="e#12867#12868#0" expanded="true" />
-                <element signature="e#12903#12904#0" expanded="true" />
-                <element signature="e#12938#12939#0" expanded="true" />
-                <element signature="e#12973#12974#0" expanded="true" />
-                <element signature="e#13001#13002#0" expanded="true" />
-                <element signature="e#13053#13054#0" expanded="true" />
-                <element signature="e#13094#13095#0" expanded="true" />
-                <element signature="e#13211#13212#0" expanded="true" />
-                <element signature="e#13252#13253#0" expanded="true" />
-                <element signature="e#13285#13286#0" expanded="true" />
-                <element signature="e#13321#13322#0" expanded="true" />
-                <element signature="e#13360#13361#0" expanded="true" />
-                <element signature="e#13388#13389#0" expanded="true" />
-                <element signature="e#13428#13429#0" expanded="true" />
-                <element signature="e#13467#13468#0" expanded="true" />
-                <element signature="e#13508#13509#0" expanded="true" />
-                <element signature="e#13548#13549#0" expanded="true" />
-                <element signature="e#13583#13584#0" expanded="true" />
-                <element signature="e#13638#13639#0" expanded="true" />
+                <element signature="e#13874#13875#0" expanded="true" />
+                <element signature="e#13918#13919#0" expanded="true" />
+                <element signature="e#13957#13958#0" expanded="true" />
+                <element signature="e#13985#13986#0" expanded="true" />
+                <element signature="e#13844#13845#0" expanded="true" />
+                <element signature="e#13909#13910#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -169,8 +168,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/SI/logic/heuristics/AlternativeGameHeuristic.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="175">
-              <caret line="32" column="5" lean-forward="true" selection-start-line="32" selection-start-column="5" selection-end-line="32" selection-end-column="5" />
+            <state relative-caret-position="489">
+              <caret line="31" selection-start-line="31" selection-end-line="31" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -179,28 +178,12 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="jrt:///usr/lib/jvm/java-11-openjdk!/java.base/java/lang/Enum.class">
+        <entry file="file://$PROJECT_DIR$/src/main/java/SI/logic/game/GameInterface.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="234">
-              <caret line="22" selection-start-line="22" selection-end-line="22" />
-              <folding>
-                <element signature="e#577#578#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/SI/models/NineMensMorris.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="144">
-              <caret line="34" selection-start-line="34" selection-end-line="34" />
+            <state relative-caret-position="485">
+              <caret line="38" column="40" selection-start-line="38" selection-start-column="40" selection-end-line="38" selection-end-column="40" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#951#952#0" expanded="true" />
-                <element signature="e#979#980#0" expanded="true" />
-                <element signature="e#1074#1075#0" expanded="true" />
-                <element signature="method#getNeighbours#0;class#NineMensMorris#0" />
               </folding>
             </state>
           </provider>
@@ -219,8 +202,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>getCopy</find>
-      <find>getMillOccupiedFields</find>
       <find>getMills</find>
       <find>updateMills</find>
       <find>System</find>
@@ -249,6 +230,8 @@
       <find>isForbidden</find>
       <find>player</find>
       <find>gameStateHistory</find>
+      <find>sortPossible</find>
+      <find>swap</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -284,19 +267,23 @@
         <option value="$PROJECT_DIR$/src/main/java/SI/models/Field.java" />
         <option value="$PROJECT_DIR$/src/main/java/SI/models/NineMensMorris.java" />
         <option value="$PROJECT_DIR$/src/main/java/SI/models/Move.java" />
-        <option value="$PROJECT_DIR$/src/main/java/SI/utils/CustomUtils.java" />
         <option value="$PROJECT_DIR$/src/main/java/SI/CustomUtils.java" />
-        <option value="$PROJECT_DIR$/src/main/java/SI/algorithms/AlgorithmInterface.java" />
         <option value="$PROJECT_DIR$/src/main/java/SI/logic/game/GameState.java" />
         <option value="$PROJECT_DIR$/src/main/java/SI/logic/heuristics/GameHeuristicInterface.java" />
-        <option value="$PROJECT_DIR$/src/main/java/SI/logic/game/GameInterface.java" />
-        <option value="$PROJECT_DIR$/src/main/java/SI/algorithms/MinMax.java" />
-        <option value="$PROJECT_DIR$/src/main/java/SI/algorithms/AlphaBetaPruning.java" />
         <option value="$PROJECT_DIR$/src/main/java/SI/models/GameModel.java" />
-        <option value="$PROJECT_DIR$/src/main/java/SI/RunConsoleInterface.java" />
-        <option value="$PROJECT_DIR$/src/main/java/SI/logic/heuristics/AlternativeGameHeuristic.java" />
-        <option value="$PROJECT_DIR$/src/main/java/SI/logic/game/Game.java" />
+        <option value="$PROJECT_DIR$/src/main/java/SI/utils/CustomUtils.java" />
+        <option value="$PROJECT_DIR$/src/main/java/SI/algorithms/AlgorithmInterface.java" />
+        <option value="$PROJECT_DIR$/src/main/java/SI/logic/heuristics/AGameHeuristic.java" />
+        <option value="$PROJECT_DIR$/src/main/java/SI/logic/heuristics/NumOfMillsHeuristic.java" />
         <option value="$PROJECT_DIR$/src/main/java/SI/logic/heuristics/GameHeuristic.java" />
+        <option value="$PROJECT_DIR$/src/main/java/SI/algorithms/Algorithm.java" />
+        <option value="$PROJECT_DIR$/src/main/java/SI/logic/heuristics/NumOfMansHeuristic.java" />
+        <option value="$PROJECT_DIR$/src/main/java/SI/logic/game/GameInterface.java" />
+        <option value="$PROJECT_DIR$/src/main/java/SI/logic/heuristics/AlternativeGameHeuristic.java" />
+        <option value="$PROJECT_DIR$/src/main/java/SI/algorithms/AlphaBetaPruning.java" />
+        <option value="$PROJECT_DIR$/src/main/java/SI/algorithms/MinMax.java" />
+        <option value="$PROJECT_DIR$/src/main/java/SI/logic/game/Game.java" />
+        <option value="$PROJECT_DIR$/src/main/java/SI/RunConsoleInterface.java" />
       </list>
     </option>
   </component>
@@ -331,7 +318,7 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="y" value="37" />
-    <option name="width" value="1547" />
+    <option name="width" value="1036" />
     <option name="height" value="1043" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -340,6 +327,66 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="SI-Zero-Sum-JavaFX" type="58d84e3e:PackageViewProjectNode" />
+              <item name="SI-Zero-Sum-JavaFX" type="616d4139:PackageViewModuleNode" />
+            </path>
+            <path>
+              <item name="SI-Zero-Sum-JavaFX" type="58d84e3e:PackageViewProjectNode" />
+              <item name="SI-Zero-Sum-JavaFX" type="616d4139:PackageViewModuleNode" />
+              <item name="SI" type="1f31426a:PackageElementNode" />
+            </path>
+            <path>
+              <item name="SI-Zero-Sum-JavaFX" type="58d84e3e:PackageViewProjectNode" />
+              <item name="SI-Zero-Sum-JavaFX" type="616d4139:PackageViewModuleNode" />
+              <item name="SI" type="1f31426a:PackageElementNode" />
+              <item name="algorithms" type="1f31426a:PackageElementNode" />
+            </path>
+            <path>
+              <item name="SI-Zero-Sum-JavaFX" type="58d84e3e:PackageViewProjectNode" />
+              <item name="SI-Zero-Sum-JavaFX" type="616d4139:PackageViewModuleNode" />
+              <item name="SI" type="1f31426a:PackageElementNode" />
+              <item name="enums" type="1f31426a:PackageElementNode" />
+            </path>
+            <path>
+              <item name="SI-Zero-Sum-JavaFX" type="58d84e3e:PackageViewProjectNode" />
+              <item name="SI-Zero-Sum-JavaFX" type="616d4139:PackageViewModuleNode" />
+              <item name="SI" type="1f31426a:PackageElementNode" />
+              <item name="logic" type="1f31426a:PackageElementNode" />
+            </path>
+            <path>
+              <item name="SI-Zero-Sum-JavaFX" type="58d84e3e:PackageViewProjectNode" />
+              <item name="SI-Zero-Sum-JavaFX" type="616d4139:PackageViewModuleNode" />
+              <item name="SI" type="1f31426a:PackageElementNode" />
+              <item name="logic" type="1f31426a:PackageElementNode" />
+              <item name="game" type="1f31426a:PackageElementNode" />
+            </path>
+            <path>
+              <item name="SI-Zero-Sum-JavaFX" type="58d84e3e:PackageViewProjectNode" />
+              <item name="SI-Zero-Sum-JavaFX" type="616d4139:PackageViewModuleNode" />
+              <item name="SI" type="1f31426a:PackageElementNode" />
+              <item name="logic" type="1f31426a:PackageElementNode" />
+              <item name="heuristics" type="1f31426a:PackageElementNode" />
+            </path>
+            <path>
+              <item name="SI-Zero-Sum-JavaFX" type="58d84e3e:PackageViewProjectNode" />
+              <item name="SI-Zero-Sum-JavaFX" type="616d4139:PackageViewModuleNode" />
+              <item name="SI" type="1f31426a:PackageElementNode" />
+              <item name="models" type="1f31426a:PackageElementNode" />
+            </path>
+            <path>
+              <item name="SI-Zero-Sum-JavaFX" type="58d84e3e:PackageViewProjectNode" />
+              <item name="SI-Zero-Sum-JavaFX" type="616d4139:PackageViewModuleNode" />
+              <item name="SI" type="1f31426a:PackageElementNode" />
+              <item name="utils" type="1f31426a:PackageElementNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -464,61 +511,13 @@
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="SI-Zero-Sum-JavaFX" type="58d84e3e:PackageViewProjectNode" />
-              <item name="SI-Zero-Sum-JavaFX" type="616d4139:PackageViewModuleNode" />
-            </path>
-            <path>
-              <item name="SI-Zero-Sum-JavaFX" type="58d84e3e:PackageViewProjectNode" />
-              <item name="SI-Zero-Sum-JavaFX" type="616d4139:PackageViewModuleNode" />
-              <item name="SI" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="SI-Zero-Sum-JavaFX" type="58d84e3e:PackageViewProjectNode" />
-              <item name="SI-Zero-Sum-JavaFX" type="616d4139:PackageViewModuleNode" />
-              <item name="SI" type="1f31426a:PackageElementNode" />
-              <item name="algorithms" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="SI-Zero-Sum-JavaFX" type="58d84e3e:PackageViewProjectNode" />
-              <item name="SI-Zero-Sum-JavaFX" type="616d4139:PackageViewModuleNode" />
-              <item name="SI" type="1f31426a:PackageElementNode" />
-              <item name="logic" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="SI-Zero-Sum-JavaFX" type="58d84e3e:PackageViewProjectNode" />
-              <item name="SI-Zero-Sum-JavaFX" type="616d4139:PackageViewModuleNode" />
-              <item name="SI" type="1f31426a:PackageElementNode" />
-              <item name="logic" type="1f31426a:PackageElementNode" />
-              <item name="game" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="SI-Zero-Sum-JavaFX" type="58d84e3e:PackageViewProjectNode" />
-              <item name="SI-Zero-Sum-JavaFX" type="616d4139:PackageViewModuleNode" />
-              <item name="SI" type="1f31426a:PackageElementNode" />
-              <item name="logic" type="1f31426a:PackageElementNode" />
-              <item name="heuristics" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="SI-Zero-Sum-JavaFX" type="58d84e3e:PackageViewProjectNode" />
-              <item name="SI-Zero-Sum-JavaFX" type="616d4139:PackageViewModuleNode" />
-              <item name="SI" type="1f31426a:PackageElementNode" />
-              <item name="models" type="1f31426a:PackageElementNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="AnalyzeApkAction.lastApkPath" value="$PROJECT_DIR$" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1557669429529" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1557695858888" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/src/main/java/SI" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
@@ -578,7 +577,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="RunConsoleInterface" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+    <configuration name="RunConsoleInterface" type="Application" factoryName="Application" singleton="false" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="SI.RunConsoleInterface" />
       <module name="SI-Zero-Sum-JavaFX" />
       <extension name="coverage">
@@ -591,6 +590,11 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="Application.App" />
+      <item itemvalue="Application.NineMensMorris" />
+      <item itemvalue="Application.RunConsoleInterface" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Application.RunConsoleInterface" />
@@ -613,11 +617,12 @@
       <workItem from="1557479801176" duration="9354000" />
       <workItem from="1557495705729" duration="68658000" />
       <workItem from="1557655306716" duration="14117000" />
+      <workItem from="1557669531420" duration="20879000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="100043000" />
+    <option name="totallyTimeSpent" value="120922000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -629,32 +634,32 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="37" width="1547" height="1043" extended-state="0" />
+    <frame x="0" y="37" width="1036" height="1043" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26456797" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.197556" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
       <window_info id="Capture Tool" order="4" />
       <window_info id="UI Designer" order="5" />
       <window_info id="Favorites" order="6" side_tool="true" />
-      <window_info anchor="bottom" id="CPU Profiler" weight="0.23710209" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32930845" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.17491749" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.78987896" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32893288" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49898168" visible="true" weight="0.3729373" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.33223322" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32930845" />
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info anchor="bottom" id="Docker" order="8" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info anchor="bottom" id="Messages" order="10" weight="0.61936194" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50101835" side_tool="true" weight="0.3729373" />
+      <window_info anchor="bottom" id="Messages" order="10" weight="0.30363035" />
       <window_info anchor="bottom" id="Franky Profiler" order="11" weight="0.32930845" />
       <window_info anchor="bottom" id="Database Changes" order="12" />
       <window_info anchor="bottom" id="Version Control" order="13" />
       <window_info anchor="bottom" auto_hide="true" id="IntelliHeap" order="14" weight="0.32930845" />
+      <window_info anchor="bottom" id="CPU Profiler" order="15" weight="0.23710209" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.24944812" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -713,54 +718,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/SI/exceptions/NoSuchFieldException.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="5" column="5" selection-start-line="5" selection-start-column="5" selection-end-line="5" selection-end-column="5" />
-          <folding>
-            <element signature="e#207#208#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/SI/exceptions/NotANeighbourException.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="8" selection-start-line="8" selection-end-line="8" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/SI/exceptions/NoSuchFieldException.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/SI/exceptions/NotANeighbourException.java" />
     <entry file="file://$PROJECT_DIR$/src/main/resources/SI/secondary.fxml" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/SI/App.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="16" column="15" lean-forward="true" selection-start-line="16" selection-start-column="15" selection-end-line="16" selection-end-column="15" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/resources/SI/primary.fxml" />
     <entry file="file://$PROJECT_DIR$/src/main/java/SI/exceptions/NoSuchColor.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/SI/exceptions/FieldEmptyException.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="5" column="64" selection-start-line="5" selection-start-column="64" selection-end-line="5" selection-end-column="64" />
-          <folding>
-            <element signature="e#131#132#0" expanded="true" />
-            <element signature="e#202#203#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/SI/exceptions/FieldOccupiedException.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/SI/exceptions/FieldEmptyException.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/SI/exceptions/FieldOccupiedException.java" />
     <entry file="file://$PROJECT_DIR$/src/main/java/SI/exceptions/MoveNotPossibleException.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="36">
@@ -768,39 +732,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/SI/enums/GamePhase.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="36">
-          <caret line="2" column="12" selection-start-line="2" selection-start-column="12" selection-end-line="2" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/SI/enums/GameResult.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="9" selection-start-line="9" selection-end-line="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/SI/exceptions/NoSuchPreviousStateException.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
-          <folding>
-            <element signature="e#145#146#0" expanded="true" />
-            <element signature="e#221#222#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/SI/exceptions/NoSuchPreviousStateException.java" />
     <entry file="file://$PROJECT_DIR$/src/main/java/SI/exceptions/RepeatedPositionException.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/SI/exceptions/RemovingOwnedFieldException.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="8" selection-start-line="8" selection-end-line="8" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/SI/exceptions/RemovingOwnedFieldException.java" />
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
@@ -811,82 +745,12 @@
     <entry file="file://$PROJECT_DIR$/SI-Zero-Sum-JavaFX.iml">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/SI/models/Move.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="12" selection-start-line="12" selection-end-line="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/SI/utils/CustomUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="432">
-          <caret line="24" column="17" selection-start-line="24" selection-start-column="17" selection-end-line="24" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/SI/models/Field.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="18" column="35" selection-start-line="18" selection-start-column="35" selection-end-line="18" selection-end-column="35" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/SI/logic/game/GameState.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="67" column="5" selection-start-line="67" selection-start-column="5" selection-end-line="67" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#4213#4214#0" expanded="true" />
-            <element signature="e#4252#4253#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/SI/logic/heuristics/GameHeuristicInterface.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="7" column="1" selection-start-line="7" selection-start-column="1" selection-end-line="7" selection-end-column="1" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/SI/logic/game/GameInterface.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="428">
-          <caret line="24" column="27" selection-start-line="24" selection-start-column="27" selection-end-line="24" selection-end-column="27" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/SI/algorithms/AlgorithmInterface.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="36">
-          <caret line="2" column="17" selection-start-line="2" selection-start-column="17" selection-end-line="2" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/SI/algorithms/AlphaBetaPruning.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="14" lean-forward="true" selection-start-line="14" selection-end-line="14" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/SI/models/Move.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/SI/models/Field.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/SI/logic/game/GameState.java" />
     <entry file="file://$PROJECT_DIR$/src/main/java/SI/models/NineMensMorris.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
+        <state relative-caret-position="612">
           <caret line="34" selection-start-line="34" selection-end-line="34" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -908,17 +772,82 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/SI/logic/heuristics/AGameHeuristic.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="2" column="26" lean-forward="true" selection-start-line="2" selection-start-column="26" selection-end-line="2" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/SI/logic/heuristics/PossibleMillsHeuristic.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="414">
+          <caret line="27" column="5" lean-forward="true" selection-start-line="27" selection-start-column="5" selection-end-line="27" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/SI/utils/CustomUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="19" column="34" selection-start-line="19" selection-start-column="34" selection-end-line="19" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/SI/App.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="179">
+          <caret line="16" column="15" lean-forward="true" selection-start-line="16" selection-start-column="15" selection-end-line="16" selection-end-column="15" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/SI/enums/GamePhase.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="2" column="12" selection-start-line="2" selection-start-column="12" selection-end-line="2" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/SI/enums/GameResult.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="7" column="18" lean-forward="true" selection-start-line="7" selection-start-column="18" selection-end-line="7" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/SI/logic/game/GameInterface.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="485">
+          <caret line="38" column="40" selection-start-line="38" selection-start-column="40" selection-end-line="38" selection-end-column="40" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/SI/logic/heuristics/GameHeuristic.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="9" selection-start-line="9" selection-end-line="9" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#313#314#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/SI/models/GameModel.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="207">
-          <caret line="46" column="36" selection-start-line="46" selection-start-column="36" selection-end-line="46" selection-end-column="36" />
+        <state relative-caret-position="192">
+          <caret line="114" selection-start-line="114" selection-end-line="114" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#1714#1715#0" expanded="true" />
             <element signature="e#1763#1764#0" expanded="true" />
             <element signature="e#3262#3263#0" expanded="true" />
             <element signature="e#3296#3297#0" expanded="true" />
-            <element signature="e#3345#3346#0" expanded="true" />
             <element signature="e#3392#3393#0" expanded="true" />
             <element signature="e#3435#3436#0" expanded="true" />
             <element signature="e#3463#3464#0" expanded="true" />
@@ -928,20 +857,42 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/SI/RunConsoleInterface.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/SI/logic/heuristics/AlternativeGameHeuristic.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="30" column="56" lean-forward="true" selection-start-line="30" selection-start-column="56" selection-end-line="30" selection-end-column="56" />
+        <state relative-caret-position="489">
+          <caret line="31" selection-start-line="31" selection-end-line="31" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/SI/logic/heuristics/AlternativeGameHeuristic.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/SI/algorithms/Algorithm.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="32" column="5" lean-forward="true" selection-start-line="32" selection-start-column="5" selection-end-line="32" selection-end-column="5" />
+        <state relative-caret-position="830">
+          <caret line="59" selection-start-line="59" selection-end-line="59" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1619#1620#0" expanded="true" />
+            <element signature="e#1737#1738#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/SI/algorithms/MinMax.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="22" column="25" lean-forward="true" selection-start-line="22" selection-start-column="25" selection-end-line="22" selection-end-column="25" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/SI/algorithms/AlphaBetaPruning.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="432">
+          <caret line="42" lean-forward="true" selection-start-line="42" selection-end-line="42" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -950,60 +901,34 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/SI/logic/game/Game.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
+        <state relative-caret-position="90">
           <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#2603#2604#0" expanded="true" />
-            <element signature="e#2640#2641#0" expanded="true" />
-            <element signature="e#5737#5738#0" expanded="true" />
-            <element signature="e#5827#5828#0" expanded="true" />
-            <element signature="e#7477#7478#0" expanded="true" />
-            <element signature="e#7516#7517#0" expanded="true" />
-            <element signature="e#7571#7572#0" expanded="true" />
-            <element signature="e#7638#7639#0" expanded="true" />
-            <element signature="e#10045#10046#0" expanded="true" />
-            <element signature="e#10110#10111#0" expanded="true" />
-            <element signature="e#12142#12143#0" expanded="true" />
-            <element signature="e#12199#12200#0" expanded="true" />
-            <element signature="e#12830#12831#0" expanded="true" />
-            <element signature="e#12867#12868#0" expanded="true" />
-            <element signature="e#12903#12904#0" expanded="true" />
-            <element signature="e#12938#12939#0" expanded="true" />
-            <element signature="e#12973#12974#0" expanded="true" />
-            <element signature="e#13001#13002#0" expanded="true" />
-            <element signature="e#13053#13054#0" expanded="true" />
-            <element signature="e#13094#13095#0" expanded="true" />
-            <element signature="e#13211#13212#0" expanded="true" />
-            <element signature="e#13252#13253#0" expanded="true" />
-            <element signature="e#13285#13286#0" expanded="true" />
-            <element signature="e#13321#13322#0" expanded="true" />
-            <element signature="e#13360#13361#0" expanded="true" />
-            <element signature="e#13388#13389#0" expanded="true" />
-            <element signature="e#13428#13429#0" expanded="true" />
-            <element signature="e#13467#13468#0" expanded="true" />
-            <element signature="e#13508#13509#0" expanded="true" />
-            <element signature="e#13548#13549#0" expanded="true" />
-            <element signature="e#13583#13584#0" expanded="true" />
-            <element signature="e#13638#13639#0" expanded="true" />
+            <element signature="e#13874#13875#0" expanded="true" />
+            <element signature="e#13918#13919#0" expanded="true" />
+            <element signature="e#13957#13958#0" expanded="true" />
+            <element signature="e#13985#13986#0" expanded="true" />
+            <element signature="e#13844#13845#0" expanded="true" />
+            <element signature="e#13909#13910#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/SI/algorithms/MinMax.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/SI/RunConsoleInterface.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="38" column="28" lean-forward="true" selection-start-line="38" selection-start-column="28" selection-end-line="38" selection-end-column="28" />
+        <state relative-caret-position="259">
+          <caret line="30" column="28" lean-forward="true" selection-start-line="30" selection-start-column="28" selection-end-line="30" selection-end-column="28" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/SI/logic/heuristics/GameHeuristic.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/SI/logic/heuristics/NumOfMansHeuristic.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="298">
-          <caret line="19" column="51" selection-start-line="19" selection-start-column="51" selection-end-line="19" selection-end-column="51" />
+        <state relative-caret-position="270">
+          <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
