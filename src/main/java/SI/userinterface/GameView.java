@@ -76,6 +76,8 @@ public class GameView implements Initializable {
     public void handleStartClick() {
         initGame();
 
+        button_start.setDisable(true);
+        button_reset.setDisable(false);
         this.task = new GameTask(this, this.game);
         this.task.execute();
     }
@@ -94,8 +96,6 @@ public class GameView implements Initializable {
         time_label.setText("0");
         white_moves_counter.setText("0");
         black_moves_counter.setText("0");
-        button_start.setDisable(true);
-        button_reset.setDisable(false);
         this.gameStarted = true;
         this.userMove = null;
         this.twoManMove = null;
@@ -300,18 +300,18 @@ public class GameView implements Initializable {
             timeLimit = white_time_checkbox.isSelected() ? Double.parseDouble(white_time_value.getText()) : Double.MAX_VALUE;
 
             if(index == 1)
-                algorithm = new MinMax(this.game, depthLimit, heuristic, false, false, true, timeLimit);
+                algorithm = new MinMax(this.game, depthLimit, heuristic, false, false, timeLimit);
             else if(index == 2)
-                algorithm = new AlphaBetaPruning(this.game, depthLimit, heuristic, false, false, true, timeLimit);
+                algorithm = new AlphaBetaPruning(this.game, depthLimit, heuristic, false, false,  timeLimit);
         } else {
 
             depthLimit = black_depth_checkbox.isSelected() ? Integer.parseInt(black_depth_value.getText()) : Integer.MAX_VALUE;
             timeLimit = black_time_checkbox.isSelected() ? Double.parseDouble(black_time_value.getText()) : Double.MAX_VALUE;
 
             if(index == 1) {
-                algorithm = new MinMax(this.game, depthLimit, heuristic, false, false, true, timeLimit);
+                algorithm = new MinMax(this.game, depthLimit, heuristic, false, false,  timeLimit);
             } else if(index == 2) {
-                algorithm = new AlphaBetaPruning(this.game, depthLimit, heuristic, false, false, true, timeLimit);
+                algorithm = new AlphaBetaPruning(this.game, depthLimit, heuristic, false, false,  timeLimit);
             }
         }
 

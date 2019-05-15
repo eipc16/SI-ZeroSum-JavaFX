@@ -22,9 +22,9 @@ public class RunConsoleInterface {
         GameHeuristic heuristicWhite = new WeightedFieldValueHeuristic(20, 8, 10);
         GameHeuristic heuristicBlack = new WeightedFieldValueHeuristic(20, 8, 10);
 
-        Algorithm white = new AlphaBetaPruning(game, 4, heuristicWhite, true, true, true, Double.MAX_VALUE);
+        Algorithm white = new AlphaBetaPruning(game, 8, heuristicWhite, false, false, Double.MAX_VALUE);
         //Algorithm black = new AlphaBetaPruning(game, 1, heuristicBlack, false);
-        Algorithm black = new AlphaBetaPruning(game, 4, heuristicBlack, false,false, true, Double.MAX_VALUE);
+        Algorithm black = new AlphaBetaPruning(game, 8, heuristicBlack, false,false, Double.MAX_VALUE);
         //Algorithm black = new MinMax(game,  3);
         Algorithm algorithm;
         game.init();
@@ -57,13 +57,10 @@ public class RunConsoleInterface {
 //                    System.out.print("Next move: ");
 //                    best = scanner.nextLine();
                 }
-                //String best = algorithm.getNextBestMove();
                 System.out.println(String.format("Best move: %s", best));
                 System.out.print("\nNext move: ");
-                //instruction = scanner.nextLine();
 
                 try {
-                    //String best = scanner.nextLine();
                     game.move(best);
                     moveTime = (System.currentTimeMillis() - startMoveTime) / 1000D;
                     System.out.println(String.format("Move time: %.6f seconds", moveTime));
@@ -78,7 +75,7 @@ public class RunConsoleInterface {
                 System.out.println("----------[FINISHED]----------");
                 System.out.println("Result: " + game.getResult());
                 System.out.println("Winner: " + game.getWinner());
-                System.out.println("Moves: " + ((Game) game).getTotalMoves());
+                System.out.println("Moves: " + game.getTotalMoves());
                 System.out.println(String.format("Total time elapsed: %.4f seconds", totalTime));
                 System.out.println(String.format("Black moves: %s", (game.getPlayerMoveCount(Color.BLACK))));
                 System.out.println(String.format("White moves: %s", (game.getPlayerMoveCount(Color.WHITE))));

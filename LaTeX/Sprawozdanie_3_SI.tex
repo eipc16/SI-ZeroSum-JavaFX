@@ -82,7 +82,7 @@
     \section{Wstęp}
     \justify
     \subsection{Opis implementacji}
-    Zaimplementowany program składa się z pięciu głównych części. Należą do nich modele, logika gry, heurystyki wyboru wartości, algorytmy oraz interfejs użytkownika. Modele przedstawiają widok planszy oraz zawierają informacje o znajdujących się w niej polach i możliwych do zdobycia młynkach. Silnik gry następnie wykorzystuje zaimportowany model podczas właściwej rozgrywki do weryfikowania ruchów gracza oraz dokonywania ewaluacji stanu gry. Stany gry są ewaluowane na podstawie heurystyki wartości przypisanej do danego algorytmu. Wybrane algorytmy natomiast poprzez wykorzystanie odpowiedniego interfejsu z silnika gry podejmują decyzję o następnym ruchu, a następnie wysyłają informację zwrotną zawierającą podjętą decyzję. Interfejs użytkownika został napisany przy pomocy biblioteki JavaFX. Jego zadaniem jest udostępnienie użytkownikowi możliwości zmiany dostępnych opcji jak wybór algorytmu przypisanego do danego gracza i wybór heurystyk poprzez odpowiednie kontrolki.
+    Zaimplementowany program składa się z pięciu głównych części. Należą do nich modele, logika gry, heurystyki wyboru wartości, algorytmy oraz interfejs użytkownika. Modele przedstawiają widok planszy oraz zawierają informacje o znajdujących się w niej polach i możliwych do zdobycia młynkach. Silnik gry następnie wykorzystuje zaimportowany model podczas właściwej rozgrywki do weryfikowania ruchów gracza oraz dokonywania ewaluacji stanu gry. Stany gry są ewaluowane na podstawie heurystyki wartości przypisanej do danego algorytmu. Wybrane algorytmy natomiast poprzez wykorzystanie odpowiedniego interfejsu z silnika gry podejmują decyzję o następnym ruchu, a następnie wysyłają informację zwrotną w celu wykonania ruchu. Interfejs użytkownika został napisany przy pomocy biblioteki JavaFX. Jego zadaniem jest udostępnienie użytkownikowi możliwości zmiany dostępnych opcji jak wybór algorytmu przypisanego do danego gracza i wybór heurystyk poprzez odpowiednie kontrolki.
     
     W badaniach wprowadzono ograniczenia zgodne z oficjalnymi zasadami gry. Grę zwycięża gracz, który zablokuje wszystkie możliwe ruchy przeciwnika lub zredukuje jego liczbę pionków do 2. Dokonywanie ruchów wstecz jest zakazane. Oznacza to, że jeśli w poprzedniej rundzie gracz dokonał ruchu ``A1 - A4'' to nie może w rundzie obecnej wykonać ruchu ``A4 - A1''. W przypadku gdy żaden z graczy nie ułożył młynka w ciągu 50 ruchów lub stan planszy powtórzył się 3 razy wynikiem meczu jest remis.
     
@@ -126,7 +126,7 @@
             return evaluate(startPlayer)
         for next_move in possible_moves
             result = alfabeta(next_move, depth + 1, startPlayer, alfa, beta)
-            if(maximize)
+            if(activePlayer == startPlayer)
                 if(result > best)
                     best, alpha = result
             else
@@ -141,7 +141,7 @@
     Poniższe badania mają na celu zbadanie wpływu maksymalnej głębokości przeszukiwania i maksymalnego dozwolonego czasu przeznaczonego na ruch na działanie algorytmów Min-Max oraz Alfa-Beta. Oba badania zostały przeprowadzone na meczach AI vs AI, dla różnych czasów i głębokości przeszukiwań. 
     \justify
     \subsection{Wpływ maksymalnej głębokości na działanie algorytmu}
-    Badanie polega na zmierzeniu czasu rozgrywki oraz liczbę potrzebnych ruchów do uzyskania zwycięstwa dla obu z wykonywanych algorytmów. Badanie przeprowadzone zostało na różnych maksymalnych głębokościach zarówno dla algorytmu Min-Max jak i algorytmu Alfa-Beta. W każdym z badań wykorzystano heurystykę oceny ruchu na podstawie sumy różnicy liczby znajdujących się na planszy pionków oraz różnicy liczby dostępnych ruchów. Wyniki badań przedstawiono w poniższych tabelach. Czasy przetwarzania są wynikami uśrednionymi z 5 uruchomień rozgrywki AI vs AI.
+    Badanie polega na zmierzeniu czasu rozgrywki oraz liczby ruchów potrzebnych do uzyskania zwycięstwa dla obu z wykonywanych algorytmów. Badanie przeprowadzone zostało na różnych maksymalnych głębokościach zarówno dla algorytmu Min-Max jak i algorytmu Alfa-Beta. W każdym z badań wykorzystano heurystykę oceny ruchu na podstawie sumy różnicy liczby znajdujących się na planszy pionków oraz różnicy liczby dostępnych ruchów. Wyniki badań przedstawiono w poniższych tabelach. Czasy przetwarzania są wynikami uśrednionymi z 5 uruchomień rozgrywki AI vs AI.
     
     \begin{table}[H]
     \caption{Wpływ głębokości na działanie algorytmu Min-Max}
