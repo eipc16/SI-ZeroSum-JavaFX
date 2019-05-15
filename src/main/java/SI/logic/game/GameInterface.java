@@ -6,35 +6,34 @@ import SI.exceptions.*;
 import SI.models.GameModel;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public interface GameInterface {
 
     void init();
     void move(String command) throws MoveNotPossibleException;
 
-    GamePhase getState();
+    GamePhase getPhase();
 
     String getStateName();
-    Color getWinner();
     String getResult();
 
+    Color getWinner();
     Color getActivePlayer();
-    Color getEnemyPlayer();
-
-    List<String> getPossibleMoves();
-    List<String> getPlayerMovesHistory(Color color);
 
     int getPlacingMovesLeft();
     int getMovesSinceMill();
     int getRemovingMovesLeft();
     int getTotalMoves();
+    int getPlayerMoveCount(Color playerColor);
+    int getPlayerFields(Color playerColor);
 
     GameModel getGameModel();
-
     Game getCopy();
 
     boolean isFinished();
 
-    int getPlayerMoveCount(Color playerColor);
-    int getPlayerMans(Color playerColor);
+    Map<Color, Set<String>> getFieldsState();
+    List<String> getPossibleMoves();
 }

@@ -1,53 +1,67 @@
 package SI.algorithms;
 
 import SI.enums.Color;
+import SI.enums.Sorting;
 import SI.exceptions.MoveNotPossibleException;
 import SI.logic.game.GameInterface;
 import SI.logic.heuristics.GameHeuristic;
-import SI.utils.CustomUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.Map.Entry.comparingByValue;
 
 public abstract class Algorithm {
 
     protected GameInterface game;
-    protected GameHeuristic gameHeuristic;
-    protected int numOfInstructions;
+    private GameHeuristic gameHeuristic;
+    int numOfInstructions;
 
-    private boolean sorting;
+    boolean sorting;
 
-    public Algorithm(GameInterface game, GameHeuristic gameHeuristic, boolean sorting) {
+    Algorithm(GameInterface game, GameHeuristic gameHeuristic, boolean sorting) {
         this.game = game;
         this.gameHeuristic = gameHeuristic;
         this.numOfInstructions = 0;
         this.sorting = sorting;
     }
 
-    List<String> getPossibleMoves() {
-        List<String> possibleMoves = game.getPossibleMoves();
-
-        if(sorting) {
-            try {
-                sortPossibleMoves(possibleMoves);
-            } catch (MoveNotPossibleException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return possibleMoves;
+    List<String> getPossibleMoves(Color playerColor, GameInterface game) {
+        return game.getPossibleMoves();
     }
 
-    private void sortPossibleMoves(List<String> possibleMoves) throws MoveNotPossibleException {
-        List<Double> coeffs = new ArrayList<>();
+    List<String> getPossibleMoves(Color playerColor, GameInterface game, Sorting sorting) {
+        List<String> possibleMoves = game.getPossibleMoves();
 
+        try {
+            return sortPossibleMoves(game, possibleMoves, playerColor, sorting);
+        } catch (Exception e) {
+            return possibleMoves;
+        }
+    }
+
+    private List<String> sortPossibleMoves(GameInterface game, List<String> possibleMoves, Color playerColor, Sorting sorting) throws MoveNotPossibleException {
+        Map<String, Double> moveMap = new HashMap<>();
         for(String move : possibleMoves) {
             GameInterface tempGame = game.getCopy();
             tempGame.move(move);
-            coeffs.add(gameHeuristic.getResultCoefficient(tempGame));
+            moveMap.put(move, evaluate(tempGame, playerColor));
         }
 
-        CustomUtils.sortArray(possibleMoves, coeffs);
+        if(sorting.equals(Sorting.ASCENDING))
+            return moveMap
+                    .entrySet()
+                    .stream()
+                    .sorted(comparingByValue())
+                    .map(Map.Entry::getKey)
+                    .collect(Collectors.toList());
+        else
+            return moveMap
+                    .entrySet()
+                    .stream()
+                    .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                    .map(Map.Entry::getKey)
+                    .collect(Collectors.toList());
     }
 
     public abstract String getNextBestMove();
@@ -56,7 +70,11 @@ public abstract class Algorithm {
         return this.numOfInstructions;
     }
 
-    double evaluate() {
-        return gameHeuristic.getResultCoefficient(game);
+    double evaluate(GameInterface tempGame, Color playerColor) {
+        return playerTurn(playerColor) * gameHeuristic.getResultCoefficient(tempGame);
+    }
+
+    private double playerTurn(Color playerColor) {
+        return playerColor.equals(Color.WHITE) ? 1 : -1;
     }
 }

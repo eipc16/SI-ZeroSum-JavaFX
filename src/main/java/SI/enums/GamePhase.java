@@ -1,6 +1,7 @@
 package SI.enums;
 
 public enum GamePhase {
+    NONE,
     PLACING,    //placing mens on the board
     MOVING,     //moving mens across the board
     FLYING,     //active when player has only 3 mens left

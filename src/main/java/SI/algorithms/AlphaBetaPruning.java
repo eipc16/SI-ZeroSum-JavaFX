@@ -1,73 +1,94 @@
 package SI.algorithms;
 
 import SI.enums.Color;
+import SI.enums.Sorting;
 import SI.exceptions.*;
 import SI.logic.game.GameInterface;
 import SI.logic.heuristics.GameHeuristic;
 
 import java.util.List;
 
+import static java.lang.Double.MAX_VALUE;
+
+@SuppressWarnings("Duplicates")
 public class AlphaBetaPruning extends Algorithm {
 
     private int depthLimit;
+    private boolean sortAllDepths;
+    private double timeLimit;
 
-    public AlphaBetaPruning(GameInterface game, int depthLimit, GameHeuristic gameHeuristic, boolean sorting) {
+    public AlphaBetaPruning(GameInterface game, int depthLimit, GameHeuristic gameHeuristic, boolean sorting, boolean sortAllDepths, double timeLimit) {
         super(game, gameHeuristic, sorting);
         this.depthLimit = depthLimit;
+        this.timeLimit = timeLimit;
+        this.sortAllDepths = sortAllDepths;
     }
 
     @Override
     public String getNextBestMove() {
         String bestMove = null;
-        double bestResult = -Double.MAX_VALUE;
-
-        double alpha = -Double.MAX_VALUE;
-        double beta = Double.MAX_VALUE;
+        double bestResult = -MAX_VALUE;
+        double result = -MAX_VALUE;
 
         Color playerColor = game.getActivePlayer();
-        List<String> possibleMoves = getPossibleMoves();
+        List<String> possibleMoves;
+
+        long startTime;
+        double subTimeLimit = timeLimit / game.getPossibleMoves().size();
+
+        if(sorting)
+            possibleMoves = getPossibleMoves(playerColor, game, Sorting.DESCENDING);
+        else
+            possibleMoves = getPossibleMoves(playerColor, game);
+
+        if(possibleMoves.size() == 1)
+            return possibleMoves.get(0);
 
         for(String move : possibleMoves) {
-            alpha = calculateCoeff(game.getCopy(), move, 0, playerColor, alpha, beta);
+            startTime = System.currentTimeMillis();
+            result = calculateCoeff(game.getCopy(), move, 0, playerColor, result, MAX_VALUE, startTime, subTimeLimit);
 
-            if (bestMove == null || alpha > bestResult) {
+            if (bestMove == null || result > bestResult) {
                 bestMove = move;
-                bestResult = alpha;
+                bestResult = result;
             }
-        }
 
-        System.out.println(game.getActivePlayer() + " Result: " + bestResult);
+            if(((System.currentTimeMillis() - startTime) / 1000D) > timeLimit)
+                return bestMove;
+        }
 
         return bestMove;
     }
 
-    private double calculateCoeff(GameInterface game, String move, int depth, Color playerColor, double alpha, double beta) {
+    private double calculateCoeff(GameInterface game, String move, int depth, Color playerColor, double alpha, double beta, long startTime, double subTimeLimit) {
         double bestResult, result;
 
         try {
             game.move(move);
             this.numOfInstructions++;
 
-            if(depth >= depthLimit) {
-                return evaluate();
+            if(depth >= depthLimit || game.isFinished() || ((System.currentTimeMillis() - startTime) / 1000D) > subTimeLimit) {
+                return evaluate(game, playerColor);
 
             }
 
-            if(game.isFinished()) {
-                if(game.getWinner().equals(playerColor)) {
-                    return Double.MAX_VALUE / depth;
-                } else if (game.getWinner().equals(Color.NONE)) {
-                    return 0;
-                } else {
-                    return -Double.MAX_VALUE / depth;
-                }
-            }
+            depth += 1;
 
             boolean maximize = game.getActivePlayer().equals(playerColor);
             bestResult = maximize ? alpha : beta;
 
-            for(String nextMove : game.getPossibleMoves()) {
-                result = calculateCoeff(game.getCopy(), nextMove, depth + 1, playerColor, alpha, beta);
+            List<String> possibleMoves;
+            if(sortAllDepths) {
+                if(maximize)
+                    possibleMoves = getPossibleMoves(game.getActivePlayer(), game.getCopy(), Sorting.DESCENDING);
+                else
+                    possibleMoves = getPossibleMoves(game.getActivePlayer(), game.getCopy(), Sorting.DESCENDING);
+            } else {
+                possibleMoves = game.getPossibleMoves();
+            }
+
+            for(String nextMove : possibleMoves) {
+                result = calculateCoeff(game.getCopy(), nextMove, depth + 1, playerColor, alpha, beta, startTime, subTimeLimit);
 
                 if(maximize) {
                     if (result > bestResult) {
@@ -81,7 +102,7 @@ public class AlphaBetaPruning extends Algorithm {
                     }
                 }
 
-                if(alpha >= beta) {
+                if (alpha >= beta) {
                     return bestResult;
                 }
             }
@@ -90,7 +111,7 @@ public class AlphaBetaPruning extends Algorithm {
 
         } catch (MoveNotPossibleException e) {
             e.printStackTrace();
-            return -Double.MAX_VALUE;
+            return -MAX_VALUE;
         }
     }
 }

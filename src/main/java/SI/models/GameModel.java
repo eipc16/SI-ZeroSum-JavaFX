@@ -7,23 +7,21 @@ import java.util.*;
 
 public abstract class GameModel implements Serializable {
 
-    protected Map<String, Color> fieldColors;
-    protected List<Set<String>> mills;
-    protected Map<Color, Set<String>> fieldsByColor;
-    protected Map<String, Set<String>> fieldNeighbours;
+    Map<String, Color> fieldColors;
+    List<Set<String>> mills;
+    Map<Color, Set<String>> fieldsByColor;
+    Map<String, Set<String>> fieldNeighbours;
 
-    protected int numOfMans;
-    protected boolean backMoves;
+    private int numOfMans;
 
-    GameModel(int numOfMans, boolean backMoves) {
+    GameModel(int numOfMans) {
         this.fieldColors = new HashMap<>();
         this.mills = new ArrayList<>();
         this.numOfMans = numOfMans;
-        this.backMoves = backMoves;
 
         this.fieldsByColor = new HashMap<>();
 
-        for(Color c : Color.values()) {
+        for (Color c : Color.values()) {
             fieldsByColor.put(c, new HashSet<>());
         }
 
@@ -32,23 +30,22 @@ public abstract class GameModel implements Serializable {
 
     GameModel(GameModel gameModel) {
         this.numOfMans = gameModel.numOfMans;
-        this.backMoves = gameModel.backMoves;
 
         this.mills = new ArrayList<>(gameModel.getMills());
         this.fieldColors = new HashMap<>(gameModel.getFields());
 
         this.fieldsByColor = new HashMap<>();
 
-        for(Color c : gameModel.fieldsByColor.keySet()) {
+        for (Color c : gameModel.fieldsByColor.keySet()) {
             this.fieldsByColor.put(c, new HashSet<>());
         }
 
-        for(String fieldName : this.fieldColors.keySet()) {
+        for (String fieldName : this.fieldColors.keySet()) {
             this.fieldsByColor.get(getFieldColor(fieldName)).add(fieldName);
         }
 
         this.fieldNeighbours = new HashMap<>();
-        for(String fieldName : gameModel.fieldNeighbours.keySet()) {
+        for (String fieldName : gameModel.fieldNeighbours.keySet()) {
             this.fieldNeighbours.put(fieldName, gameModel.fieldNeighbours.get(fieldName));
         }
     }
@@ -70,8 +67,8 @@ public abstract class GameModel implements Serializable {
     public List<Set<String>> getPossibleMills(String fieldName) {
         List<Set<String>> possibleMills = new ArrayList<>();
 
-        for(Set<String> mill : mills) {
-            if(mill.contains(fieldName)) {
+        for (Set<String> mill : mills) {
+            if (mill.contains(fieldName)) {
                 possibleMills.add(mill);
             }
         }
@@ -80,7 +77,7 @@ public abstract class GameModel implements Serializable {
     }
 
     public void resetFields() {
-        for(String fieldName : fieldColors.keySet()) {
+        for (String fieldName : fieldColors.keySet()) {
             Color fieldColor = fieldColors.get(fieldName);
 
             if (fieldColor != Color.NONE) {
@@ -94,8 +91,8 @@ public abstract class GameModel implements Serializable {
     public boolean isSamePlacing(GameModel gameModel) {
         Map<String, Color> previousFields = gameModel.getFields();
 
-        for(String fieldName : previousFields.keySet()) {
-            if(!previousFields.get(fieldName).equals(fieldColors.get(fieldName))) {
+        for (String fieldName : previousFields.keySet()) {
+            if (!previousFields.get(fieldName).equals(fieldColors.get(fieldName))) {
                 return false;
             }
         }
@@ -123,12 +120,8 @@ public abstract class GameModel implements Serializable {
         return mills.get(index);
     }
 
-    public int getNumOfMans() {
+    public int getNumOfFields() {
         return numOfMans;
-    }
-
-    public boolean backMovesAllowed() {
-        return backMoves;
     }
 
     public abstract String[][] getBoard();

@@ -3,7 +3,6 @@ package SI.models;
 import SI.enums.Color;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class NineMensMorris extends GameModel {
 
@@ -18,8 +17,8 @@ public class NineMensMorris extends GameModel {
                     {"A1",  "-",    "-",    "D1",   "-",    "-",    "G1"}
             };
 
-    public NineMensMorris(boolean backMoves) {
-        super(18, backMoves);
+    public NineMensMorris() {
+        super(18);
 
         initFields();
         initNeighbours();
@@ -52,7 +51,6 @@ public class NineMensMorris extends GameModel {
     private void initMills() {
         Set<String> millHorizontal = new HashSet<>();
         Set<String> millVertical = new HashSet<>();
-        int fieldCounter = 0;
 
         for(int i = 0; i < GAME_BOARD.length; i++) {
             for(int j = 0; j < GAME_BOARD[i].length; j++) {
@@ -80,11 +78,6 @@ public class NineMensMorris extends GameModel {
                 }
             }
         }
-//
-//        mills.forEach(m -> {
-//            System.out.print("Mill: ");
-//            System.out.println(m.stream().map(Field::getName).collect(Collectors.joining(" ")));
-//        });
     }
 
     private boolean correctField(String fieldName) {
@@ -93,61 +86,39 @@ public class NineMensMorris extends GameModel {
 
     private Set<String> getNeighbours(int fieldX, int fieldY) {
         Set<String> neighbours = new HashSet<>();
-        String fieldName;
 
         for(int i = fieldX + 1; i < GAME_BOARD.length; i++) {
-            fieldName = GAME_BOARD[i][fieldY];
-
-            if(fieldName == null) {
-                break;
-            }
-
-            if(correctField(fieldName)) {
-                neighbours.add(fieldName);
-                break;
-            }
+            if (addNeighbours(fieldY, neighbours, i)) break;
         }
 
         for(int i = fieldY + 1; i < GAME_BOARD[fieldX].length; i++) {
-            fieldName = GAME_BOARD[fieldX][i];
-
-            if(fieldName == null) {
-                break;
-            }
-
-            if(correctField(fieldName)) {
-                neighbours.add(fieldName);
-                break;
-            }
+            if (addNeighbours(i, neighbours, fieldX)) break;
         }
 
         for(int i = fieldX - 1; i >= 0; i--) {
-            fieldName = GAME_BOARD[i][fieldY];
-
-            if(fieldName == null) {
-                break;
-            }
-
-            if(correctField(fieldName)) {
-                neighbours.add(fieldName);
-                break;
-            }
+            if (addNeighbours(fieldY, neighbours, i)) break;
         }
 
         for(int i = fieldY - 1; i >= 0; i--) {
-            fieldName = GAME_BOARD[fieldX][i];
-
-            if(fieldName == null) {
-                break;
-            }
-
-            if(correctField(fieldName)) {
-                neighbours.add(fieldName);
-                break;
-            }
+            if (addNeighbours(i, neighbours, fieldX)) break;
         }
 
         return neighbours;
+    }
+
+    private boolean addNeighbours(int fieldY, Set<String> neighbours, int i) {
+        String fieldName;
+        fieldName = GAME_BOARD[i][fieldY];
+
+        if(fieldName == null) {
+            return true;
+        }
+
+        if(correctField(fieldName)) {
+            neighbours.add(fieldName);
+            return true;
+        }
+        return false;
     }
 
     private void initNeighbours() {
@@ -168,24 +139,24 @@ public class NineMensMorris extends GameModel {
 
     @Override
     public String toString() {
-        return String.format("7  %s-----------%s-----------%s\n", getManSymbol("A7"), getManSymbol("D7"), getManSymbol("G7")) +
+        return String.format("7  %s-----------%s-----------%s\n", getSign("A7"), getSign("D7"), getSign("G7")) +
                 "   |           |           |\n" +
-                String.format("6  |   %s-------%s-------%s   |\n", getManSymbol("B6"), getManSymbol("D6"), getManSymbol("F6")) +
+                String.format("6  |   %s-------%s-------%s   |\n", getSign("B6"), getSign("D6"), getSign("F6")) +
                 "   |   |       |       |   |\n" +
-                String.format("5  |   |   %s---%s---%s   |   |\n", getManSymbol("C5"), getManSymbol("D5"), getManSymbol("E5")) +
+                String.format("5  |   |   %s---%s---%s   |   |\n", getSign("C5"), getSign("D5"), getSign("E5")) +
                 "   |   |   |       |   |   |\n" +
-                String.format("4  %s---%s---%s       %s---%s---%s\n", getManSymbol("A4"), getManSymbol("B4"), getManSymbol("C4"), getManSymbol("E4"), getManSymbol("F4"), getManSymbol("G4")) +
+                String.format("4  %s---%s---%s       %s---%s---%s\n", getSign("A4"), getSign("B4"), getSign("C4"), getSign("E4"), getSign("F4"), getSign("G4")) +
                 "   |   |   |       |   |   |\n" +
-                String.format("3  |   |   %s---%s---%s   |   |\n", getManSymbol("C3"), getManSymbol("D3"), getManSymbol("E3")) +
+                String.format("3  |   |   %s---%s---%s   |   |\n", getSign("C3"), getSign("D3"), getSign("E3")) +
                 "   |   |       |       |   |\n" +
-                String.format("2  |   %s-------%s-------%s   |\n", getManSymbol("B2"), getManSymbol("D2"), getManSymbol("F2")) +
+                String.format("2  |   %s-------%s-------%s   |\n", getSign("B2"), getSign("D2"), getSign("F2")) +
                 "   |           |           |\n" +
-                String.format("1  %s-----------%s-----------%s\n\n", getManSymbol("A1"), getManSymbol("D1"), getManSymbol("G1")) +
+                String.format("1  %s-----------%s-----------%s\n\n", getSign("A1"), getSign("D1"), getSign("G1")) +
                 "   A---B---C---D---E---F---G\n";
 
     }
 
-    private String getManSymbol(String fieldName) {
+    private String getSign(String fieldName) {
         switch(fieldColors.get(fieldName)) {
             case WHITE:
                 return "W";

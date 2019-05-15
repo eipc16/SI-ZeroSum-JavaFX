@@ -1,77 +1,95 @@
 package SI.algorithms;
 
 import SI.enums.Color;
+import SI.enums.Sorting;
 import SI.exceptions.MoveNotPossibleException;
 import SI.logic.game.GameInterface;
 import SI.logic.heuristics.GameHeuristic;
 
 import java.util.List;
 
+@SuppressWarnings("Duplicates")
 public class MinMax extends Algorithm {
 
-    protected int depthLimit;
+    private int depthLimit;
+    private double timeLimit;
+    private boolean sortAllDepths;
 
-    public MinMax(GameInterface game, int depthLimit, GameHeuristic gameHeuristic, boolean sorting) {
+    public MinMax(GameInterface game, int depthLimit, GameHeuristic gameHeuristic, boolean sorting, boolean sortAllDepths, double timeLimit) {
         super(game, gameHeuristic, sorting);
         this.depthLimit = depthLimit;
+        this.timeLimit = timeLimit;
+        this.sortAllDepths = sortAllDepths;
     }
 
     @Override
     public String getNextBestMove() {
         String bestMove = null;
 
-        double moveCoeff;
-        double bestCoeff = -Double.MAX_VALUE;
+        double result;
+        double bestResult = -Double.MAX_VALUE;
 
         Color playerColor = game.getActivePlayer();
-        List<String> possibleMoves = getPossibleMoves();
+        List<String> possibleMoves;
+
+        long startTime;
+        double subTimeLimit = timeLimit / game.getPossibleMoves().size();
+
+        if(sorting)
+            possibleMoves = getPossibleMoves(playerColor, game, Sorting.DESCENDING);
+        else
+            possibleMoves = getPossibleMoves(playerColor, game);
+
+        if(possibleMoves.size() == 1)
+            return possibleMoves.get(0);
 
         for(String move : possibleMoves) {
-            moveCoeff = calculateCoeff(game.getCopy(), move, 0, playerColor);
-
-            if(bestMove == null || moveCoeff > bestCoeff) {
+            startTime = System.currentTimeMillis();
+            result = calculateCoeff(game.getCopy(), move, 0, playerColor, startTime, subTimeLimit);
+            if(bestMove == null || result > bestResult) {
                 bestMove = move;
-                bestCoeff = moveCoeff;
+                bestResult = result;
             }
         }
-
-        System.out.println(game.getActivePlayer() + " Result: " + bestCoeff);
 
         return bestMove;
     }
 
-    private double calculateCoeff(GameInterface game, String move, int depth, Color playerColor) {
+    private double calculateCoeff(GameInterface game, String move, int depth, Color playerColor, long startTime, double subTimeLimit) {
         double bestResult, result;
 
         try {
             game.move(move);
             this.numOfInstructions++;
 
-            if(depth >= depthLimit) {
-                return evaluate();
+            if(depth >= depthLimit || game.isFinished() || ((System.currentTimeMillis() - startTime) / 1000D) > subTimeLimit) {
+                return evaluate(game, playerColor);
 
-            }
-
-            if(game.isFinished()) {
-                if(game.getWinner().equals(playerColor)) {
-                    return Double.MAX_VALUE / depth;
-                } else if (game.getWinner().equals(Color.NONE)) {
-                    return 0;
-                } else {
-                    return -Double.MAX_VALUE;
-                }
             }
 
             boolean maximize = game.getActivePlayer().equals(playerColor);
-
             bestResult = maximize ? -Double.MAX_VALUE : Double.MAX_VALUE;
 
-            for(String nextMove : game.getPossibleMoves()) {
-                result = calculateCoeff(game.getCopy(), nextMove, depth + 1, playerColor);
+
+            List<String> possibleMoves;
+            if(sortAllDepths) {
+                if(maximize)
+                    possibleMoves = getPossibleMoves(game.getActivePlayer(), game.getCopy(), Sorting.DESCENDING);
+                else
+                    possibleMoves = getPossibleMoves(game.getActivePlayer(), game.getCopy(), Sorting.ASCENDING);
+            } else {
+                possibleMoves = game.getPossibleMoves();
+            }
+
+            for(String nextMove : possibleMoves) {
+                result = calculateCoeff(game.getCopy(), nextMove, depth + 1, playerColor, startTime, subTimeLimit);
+
                 if(maximize) {
-                    bestResult = Math.max(bestResult, result);
+                    if(result > bestResult)
+                        bestResult = result;
                 } else {
-                    bestResult = Math.min(bestResult, result);
+                    if(result < bestResult)
+                        bestResult = result;
                 }
             }
 

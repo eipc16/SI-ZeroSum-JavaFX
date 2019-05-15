@@ -147,11 +147,11 @@
     \begin{center}
     \begin{tabular}{|c|c|c|c|} 
     \hline
-    \thead{Głębokość} & \thead{Czas \\ przetwarzania [s]} & \thead{Liczba ruchów  \\ wygranego} & \thead{Liczba instrukcji \\\ wygranego} \\
+    \thead{Maksymalna \\ głębokość} & \thead{Czas \\ przetwarzania [s]} & \thead{Liczba ruchów  \\ wygranego} & \thead{Liczba instrukcji \\\ wygranego} \\
     \hline
      \makecell{1} & \makecell{}cell5 & \makecell{}celfflf6 & \makecell{}celfflf6 \\
     \hline
-    {2} & \makecell{}cell8 & \makecell{}cell9 & \makecell{}cell10 \\ 
+    {2} & \makecell{}cellfsdfd8 & \makecell{}cell9 & \makecell{}cell10 \\ 
     \hline
     {3} & \makecell{}cell8 & \makecell{}cell9 & \makecell{}cell10 \\ 
     \hline
@@ -159,19 +159,19 @@
     \hline
     {5} & \makecell{}cell8 & \makecell{}cell9 & \makecell{}cell10 \\ 
     \hline
-    {6} & \makecell{}cell8 & \makecell{}cell9 & \makecell{}cell10 \\ 
+    {6} & \makecell{}cell8s & \makecell{}cell9 & \makecell{}cell10 \\ 
     \hline
     \end{tabular}
     \end{center}
      \end{table}
      
-         \begin{table}[H]
+    \begin{table}[H]
     \caption{Wpływ głębokości na działanie algorytmu Alfa-Beta}
     \label{minmax_depth}
     \begin{center}
     \begin{tabular}{|c|c|c|c|} 
     \hline
-    \thead{Głębokość} & \thead{Czas \\ przetwarzania [s]} & \thead{Liczba ruchów  \\ wygranego} & \thead{Liczba instrukcji \\\ wygranego} \\
+    \thead{Maksymalna \\ głębokość} & \thead{Czas \\ przetwarzania [s]} & \thead{Liczba ruchów  \\ wygranego} & \thead{Liczba instrukcji \\\ wygranego} \\
     \hline
      \makecell{1} & \makecell{}cell5 & \makecell{}celfflf6 & \makecell{}celfflf6 \\
     \hline

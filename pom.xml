@@ -15,6 +15,27 @@
             <artifactId>javafx-controls</artifactId>
             <version>11</version>
         </dependency>
+        <dependency>
+            <groupId>com.victorlaerte</groupId>
+            <artifactId>jfx-asynctask</artifactId>
+            <version>1.0.1</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>com.victorlaerte</groupId>
+            <artifactId>jfx-asynctask</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.victorivri</groupId>
+            <artifactId>adjective_2.12</artifactId>
+            <version>0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.victorlaerte</groupId>
+            <artifactId>javafx-asynctask</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

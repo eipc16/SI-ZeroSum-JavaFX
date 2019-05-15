@@ -1,0 +1,659 @@
+\documentclass[a4paper,10pt]{article}
+%\documentclass[a4paper,10pt]{scrartcl}
+
+\usepackage{titlesec}
+\usepackage{polski}
+\usepackage[utf8]{inputenc}
+\usepackage[document]{ragged2e}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{array}
+\usepackage{makecell}
+\usepackage{float}
+\usepackage{siunitx}
+\usepackage{tikz}
+\usepackage{pgfplotstable}
+\usepackage{booktabs}
+
+\pgfplotsset{compat=newest}
+\usepgfplotslibrary{units}
+
+\pdfinfo{%
+  /Title    (Sprawozdanie nr 3 Algorytmy rozwiązywania gier o sumie zerowej)
+  /Author   (Przemysław Pietrzak)
+  /Creator  (Przemyslaw Pietrzak)
+  /Producer (Przemysław Pietrzak)
+  /Subject  (Sztuczna inteligencja)
+  /Keywords (minmax, alfa-beta, sztuczna, inteligencja)
+}
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+\sisetup{
+  round-mode          = places,
+  round-precision     = 2,
+}
+
+\newcommand{\sectionbreak}{\clearpage}
+\begin{document}
+    \begin{titlepage}
+     \newgeometry{centering, margin=1.5cm}
+     \vspace*{\fill}
+    
+     \vspace*{-4cm}
+     \Huge\bfseries\
+     {Sztuczna inteligencja i inżynieria wiedzy}
+    
+     \LARGE
+     \centering
+     \vspace{2cm}
+     {Sprawozdanie nr 3}
+    
+     \Large
+     \centering
+     {Algorytmy rozwiązywania gier o sumie zerowej}
+     
+     \vspace*{0.5cm}
+     
+     \centering
+     \large 
+     \vspace{0.5cm}
+     Przemysław Pietrzak, 238083
+     
+     Środa, 17:05
+     
+     \vspace*{\fill}
+     \restoregeometry
+    \end{titlepage}
+    
+    \tableofcontents
+    
+    \section{Wstęp}
+    \justify
+    \subsection{Opis implementacji}
+    Zaimplementowany program składa się z pięciu głównych części. Należą do nich modele, logika gry, heurystyki wyboru wartości, algorytmy oraz interfejs użytkownika. Modele przedstawiają widok planszy oraz zawierają informacje o znajdujących się w niej polach i możliwych do zdobycia młynkach. Silnik gry następnie wykorzystuje zaimportowany model podczas właściwej rozgrywki do weryfikowania ruchów gracza oraz dokonywania ewaluacji stanu gry. Stany gry są ewaluowane na podstawie heurystyki wartości przypisanej do danego algorytmu. Wybrane algorytmy natomiast poprzez wykorzystanie odpowiedniego interfejsu z silnika gry podejmują decyzję o następnym ruchu, a następnie wysyłają informację zwrotną zawierającą podjętą decyzję. Interfejs użytkownika został napisany przy pomocy biblioteki JavaFX. Jego zadaniem jest udostępnienie użytkownikowi możliwości zmiany dostępnych opcji jak wybór algorytmu przypisanego do danego gracza i wybór heurystyk poprzez odpowiednie kontrolki.
+    
+    W badaniach wprowadzono ograniczenia zgodne z oficjalnymi zasadami gry. Grę zwycięża gracz, który zablokuje wszystkie możliwe ruchy przeciwnika lub zredukuje jego liczbę pionków do 2. Dokonywanie ruchów wstecz jest zakazane. Oznacza to, że jeśli w poprzedniej rundzie gracz dokonał ruchu ``A1 - A4'' to nie może w rundzie obecnej wykonać ruchu ``A4 - A1''. W przypadku gdy żaden z graczy nie ułożył młynka w ciągu 50 ruchów lub stan planszy powtórzył się 3 razy wynikiem meczu jest remis.
+    
+    \justify
+    \subsection{Opis algorytmów}
+    Badane w następnych etapach algorytmy to min-max oraz alfa-beta. Oba algorytmy są metodami minimalizowania maksymalnych możliwych strat. Drugi z podanych algorytmów jest rozszerzeniem pierwszego, które redukuje liczbę przeszukiwanych węzłów koniecznych do odwiedzienia. Algorytm prowadzi do znalezienia takiego samego rozwiązania jak w przypadku Min-Max, jednak poprzez cięcia, potrafi to zrobić w znacznie krótszym czasie i przy mniejszej liczbie badanych węzłów. Pseudokod obu rozwiązań znajduje się poniżej.
+    
+    \begin{lstlisting}[escapeinside={(*}{*)}]
+    // Algorytm min-max
+    function getbestmove()
+        for move in possible_moves
+            result = minmax(move, max_depth, activePlayer)
+            if result > best_result
+                best_result = result, best_move = move
+        return best_move
+        
+    function minmax(move, depth, startPlayer)
+        if depth >= max_depth || game_finished || time_limit_reached
+            return evaluate(startPlayer)
+        for next_move in possible_moves
+            result = minmax(next_move, depth + 1, startPlayer)
+            if(activePlayer == startPlayer)
+                best = max(best, result)
+            else
+                best = min(best, result)
+        return best
+    \end{lstlisting}
+    \newpage
+    \begin{lstlisting}[escapeinside={(*}{*)}]
+    // Algorytm alfa-beta
+    function getbestmove()
+        result = -(*$\infty$*)
+        for move in possible_moves
+            result = minmax(move, max_depth, activePlayer, result, (*$\infty$*))
+            if result > best_result
+                best_result = alpha, best_move = move
+        return best_move
+        
+    function alfabeta(move, depth, startPlayer, alfa, beta)
+        if depth >= max_depth || game_finished || time_limit_reached
+            return evaluate(startPlayer)
+        for next_move in possible_moves
+            result = alfabeta(next_move, depth + 1, startPlayer, alfa, beta)
+            if(maximize)
+                if(result > best)
+                    best, alpha = result
+            else
+                if(result < best)
+                    best, beta = result
+            if(alpha >= beta)
+                return best
+        return best
+    \end{lstlisting}
+    
+    \section{Badanie wpływu ograniczeń przeszukiwania na czas przetwarzania i liczbę instrukcji}
+    Poniższe badania mają na celu zbadanie wpływu maksymalnej głębokości przeszukiwania i maksymalnego dozwolonego czasu przeznaczonego na ruch na działanie algorytmów Min-Max oraz Alfa-Beta. Oba badania zostały przeprowadzone na meczach AI vs AI, dla różnych czasów i głębokości przeszukiwań. 
+    \justify
+    \subsection{Wpływ maksymalnej głębokości na działanie algorytmu}
+    Badanie polega na zmierzeniu czasu rozgrywki oraz liczbę potrzebnych ruchów do uzyskania zwycięstwa dla obu z wykonywanych algorytmów. Badanie przeprowadzone zostało na różnych maksymalnych głębokościach zarówno dla algorytmu Min-Max jak i algorytmu Alfa-Beta. W każdym z badań wykorzystano heurystykę oceny ruchu na podstawie sumy różnicy liczby znajdujących się na planszy pionków oraz różnicy liczby dostępnych ruchów. Wyniki badań przedstawiono w poniższych tabelach. Czasy przetwarzania są wynikami uśrednionymi z 5 uruchomień rozgrywki AI vs AI.
+    
+    \begin{table}[H]
+    \caption{Wpływ głębokości na działanie algorytmu Min-Max}
+    \label{minmax_depth}
+    \begin{center}
+    \begin{tabular}{|c|c|c|c|} 
+    \hline
+    \thead{Maksymalna \\ głębokość} & \thead{Czas \\ przetwarzania [s]} & \thead{Liczba ruchów  \\ wygranego} & \thead{Liczba instrukcji \\\ wygranego} \\
+    \hline
+    {1} & \makecell{}0.31 & \makecell{}19 & \makecell{}2626 \\
+    \hline
+    {2} & \makecell{}1.39 & \makecell{}33 & \makecell{}44488 \\ 
+    \hline
+    {3} & \makecell{}5.71 & \makecell{}26 & \makecell{}620318 \\ 
+    \hline
+    {4} & \makecell{}73.07 & \makecell{}42 & \makecell{}9995007 \\ 
+    \hline
+    {5} & \makecell{}2166.89 & \makecell{}46 & \makecell{}210573800 \\ 
+    \hline
+    \end{tabular}
+    \end{center}
+     \end{table}
+    
+    \begin{table}[H]
+    \caption{Wpływ głębokości na działanie algorytmu Alfa-Beta}
+    \label{minmax_depth}
+    \begin{center}
+    \begin{tabular}{|c|c|c|c|}
+    \hline
+    \thead{Maksymalna \\ głębokość} & \thead{Czas \\ przetwarzania [s]} & \thead{Liczba ruchów  \\ wygranego} & \thead{Liczba instrukcji \\\ wygranego} \\
+    \hline
+    {1} & \makecell{}0.19 & \makecell{}19 & \makecell{}1202 \\
+    \hline
+    {2} & \makecell{}0.60 & \makecell{}33 & \makecell{}10296 \\ 
+    \hline
+    {3} & \makecell{}1.28 & \makecell{}26 & \makecell{}48186 \\ 
+    \hline
+    {4} & \makecell{}4.49 & \makecell{}42 & \makecell{}392007 \\ 
+    \hline
+    {5} & \makecell{}17.85 & \makecell{}46 & \makecell{}1996386 \\ 
+    \hline
+    {6} & \makecell{}89.35 & \makecell{}29 & \makecell{}10533403 \\ 
+    \hline
+    {7} & \makecell{}1818.02 & \makecell{}39 & \makecell{}206833302
+ \\ 
+    \hline
+    \end{tabular}
+    \end{center}
+     \end{table}
+     
+         \begin{figure}[H]
+    \begin{center}
+        \centering
+        \large
+        \textbf{Liczba ruchów prowadzących do wygranej w zależności od algorytmu i głębokości}\par\medskip
+        \normalsize
+        \begin{tikzpicture}
+        \begin{axis}[
+            width=8cm, % Scale the plot to \linewidth
+            ybar,
+            xlabel={Maksymalna głębokość},
+            ylabel={Liczba instrukcji},
+            legend style={at={(0.2,0.95)},anchor=north}
+            ]
+            \addplot 
+            table[x=depth,y=moves,col sep=comma] {alfabeta_depth.csv}; 
+            \addplot
+            table[x=depth,y=moves,col sep=comma]{minmax_depth.csv};
+            \legend{Alfa-Beta, Min-Max}
+        \end{axis}
+        \end{tikzpicture}
+        \caption{Zestawienie liczby ruchów zwycięzcy w zależności od głębokości i algorytmu}
+    \end{center}
+    \end{figure}
+    
+    \begin{figure}[H]
+    \begin{center}
+        \centering
+        \large
+        \textbf{Liczba instrukcji w zależności od algorytmu i głębokości}\par\medskip
+        \normalsize
+        \begin{tikzpicture}
+        \begin{semilogyaxis}[
+            width=8cm, % Scale the plot to \linewidth
+            ybar,
+            xlabel={Maksymalna głębokość},
+            ylabel={Liczba instrukcji},
+            legend style={at={(0.2,0.95)},anchor=north}
+            ]
+            \addplot 
+            table[x=depth,y=instructions,col sep=comma] {alfabeta_depth.csv}; 
+            \addplot
+            table[x=depth,y=instructions,col sep=comma]{minmax_depth.csv};
+            \legend{Alfa-Beta, Min-Max}
+        \end{semilogyaxis}
+        \end{tikzpicture}
+        \caption{Zestawienie liczby instrukcji w zależności od głębokości i algorytmu}
+    \end{center}
+    \end{figure}
+
+    \justify
+    Przeprowadzone badania jasno pokazują zależność czasu przetwarzania i liczbę wykonanych instrukcji od wykorzystywanego algorytmu i maksymalnej głębokości drzewa. W przypadku algorytmu Min-Max, przeszukiwanie głębokości większych niż 5 nie pozwoliło na znalezienie rozwiązania w rozsądnym czasie. Algorytm Alfa-Beta osiąga lepsze wyniki czasowe, jest to spowodowane tym, że jest on usprawnieniem klasycznego algorytmu Min-Max polegającym na pominięciu węzłów, które nie uzyskają lepszych wyników. Wzrost głębokości natomiast powoduje zwiększenie czasu przetwarzania jak i wzrost liczby badanych węzłów, jest to spowodowane tym, że algorytm wraz z większą głębokością maksymalną musi zbadać więcej ruchów w przód, a co za tym idzie przeszukuje większą przestrzeń stanów. W badaniach można zauważyć, że większa głębokość niekoniecznie zmniejsza liczbę potrzebnych ruchów do uzyskania wygranej, może to być jednak spowodowane wykorzystaną heurystyką, która nie jest w stanie optymalnie ocenić wartości węzłów. Badania jednak jasno wskazują na to, że oba algorytmy zmierzają do tego samego rozwiązania, ponieważ liczba ruchów gracza jest w obu przypadkach taka sama.
+    
+    \subsection{Wpływ maksymalnego czasu ruchu na działanie algorytmu}
+    Celem badania jest zbadanie wpływu maksymalnego dozwolonego czasu decyzji na czas przetwarzania i liczbę instrukcji dokonywanych przez wygrywający algorytm. Badania przeprowadzone zostały na maksymalnej głębokości przeszukiwania równej 6 w przypadku algorytmu Min-Max oraz głębokości 7 dla Alfa-Beta, natomiast maksymalny czas przeznaczony na jeden ruch został ograniczony do kolejno 2s, 5s, 10s oraz 15s. Czas na ruch w przypadku drugiego gracza został ograniczony do 1s. Heurystyka oceny ruchu pozostała bez zmian względem poprzedniego badania.
+    
+    \begin{table}[H]
+    \caption{Wpływ ograniczenia czasu ruchu na działanie algorytmu Min-Max}
+    \label{minmax_depth}
+    \begin{center}
+    \begin{tabular}{|c|c|c|c|}
+    \hline
+    \thead{Maksymalny \\ czas ruchu [s]} & \thead{Czas \\ przetwarzania [s]} & \thead{Liczba ruchów  \\ wygranego} & \thead{Liczba instrukcji \\\ wygranego} \\
+    \hline
+    {2} & \makecell{}186.77 & \makecell{}51 & \makecell{}7686986 \\
+    \hline
+    {5} & \makecell{}303.70 & \makecell{}54 & \makecell{}19823534 \\ 
+    \hline
+    {10} & \makecell{}787.15 & \makecell{}75 & \makecell{}51689233 \\ 
+    \hline
+    {15} & \makecell{}1311.4790 & \makecell{}86 & \makecell{}84521024 \\ 
+    \hline
+    \end{tabular}
+    \end{center}
+     \end{table}
+     
+    \begin{table}[H]
+    \caption{Wpływ ograniczenia czasu ruchu na działanie algorytmu Alfa-Beta}
+    \label{minmax_depth}
+    \begin{center}
+    \begin{tabular}{|c|c|c|c|}
+    \hline
+    \thead{Maksymalny \\ czas ruchu [s]} & \thead{Czas \\ przetwarzania [s]} & \thead{Liczba ruchów  \\ wygranego} & \thead{Liczba instrukcji \\ wygranego} \\
+    \hline
+    {2} & \makecell{}143.08 & \makecell{}50 & \makecell{}7957804 \\
+    \hline
+    {5} & \makecell{}216.65 & \makecell{}38 & \makecell{}15458750 \\ 
+    \hline
+    {10} & \makecell{}271.44 & \makecell{}27 & \makecell{}23159678\\ 
+    \hline
+    {15} & \makecell{}433.28 & \makecell{}37 & \makecell{}35866001 \\ 
+    \hline
+    \end{tabular}
+    \end{center}
+     \end{table}
+     
+    \begin{figure}[H]
+    \begin{center}
+        \centering
+        \large
+        \textbf{Liczba prowadzących do wygranej w zależności od algorytmu i maksymalnego czasu ruchu}\par\medskip
+        \normalsize
+        \begin{tikzpicture}
+        \begin{axis}[
+            width=8cm, % Scale the plot to \linewidth
+            ybar,
+            xlabel={Maksymalny czas na podjęcie decyzji [s]},
+            xtick={2,5,10,15},
+            ylabel={Liczba ruchów},
+            legend style={at={(0.2,0.95)},anchor=north}
+            ]
+            \addplot 
+            table[x=max_time,y=total_moves,col sep=comma]{alfabeta_time.csv}; 
+            \addplot
+            table[x=max_time,y=total_moves,col sep=comma]{minmax_time.csv};
+            \legend{Alfa-Beta, Min-Max}
+        \end{axis}
+        \end{tikzpicture}
+        \caption{Zestawienie liczby ruchów w zależności od maksymalnego czasu na ruch i algorytmu}
+    \end{center}
+    \end{figure}
+
+    \begin{figure}[H]
+    \begin{center}
+        \centering
+        \large
+        \textbf{Liczba zbadanych stanów w zależności od algorytmu i maksymalnego czasu ruchu}\par\medskip
+        \normalsize
+        \begin{tikzpicture}
+        \begin{semilogyaxis}[
+            width=8cm, % Scale the plot to \linewidth
+            ybar,
+            xlabel={Maksymalny czas na podjęcie decyzji [s]},
+            xtick={2,5,10,15},
+            ylabel={Liczba instrukcji},
+            legend style={at={(0.2,0.95)},anchor=north}
+            ]
+            \addplot 
+            table[x=max_time,y=total_instructions,col sep=comma]{alfabeta_time.csv}; 
+            \addplot
+            table[x=max_time,y=total_instructions,col sep=comma]{minmax_time.csv};
+            \legend{Alfa-Beta, Min-Max}
+        \end{semilogyaxis}
+        \end{tikzpicture}
+        \caption{Zestawienie liczby ruchów w zależności od maksymalnego czasu na ruch i algorytmu}
+    \end{center}
+    \end{figure}
+    
+    \newpage
+    \justify
+    W obu przypadkach, wraz ze wzrostem czasu przeznaczonego na ruch można zauważyć wzrost liczby instrukcji przeprowadzanych przez algorytm, dla każdego możliwego ruchu w danej turze przyznawany jest równomiernie przedział czasowy, w którym musi znaleźć najlepsze rozwiązanie. Powoduje to, że im więcej czasu przeznaczone jest na ruch, tym więcej ruchów w przód jest w stanie przewidzieć algorytm. W badaniach widoczne jest jednak, że większa liczba sekund na ruch niekoniecznie powoduje znalezienie lepszego rozwiązania. Prawdopodobnym powodem takiego działania jest to, że algorytm wykorzystuje cały swój przydzielony czas na zbadanie jednego poddrzewa. Takie działanie, powoduje też, że w przeciwieństwie do poprzedniego badania, algorytm Alfa-Beta nie wyszukuje tych samych rozwiązań co Min-Max. Algorytm Alfa-Beta przeszukuje drzewo szybciej niż Min-Max, dlatego uzależnienie jego działania od czasu może sprawdzić, że będzie on w stanie przeszukać więcej węzłów, a co za tym idzie więcej potencjalnych lepszych rozwiązań.
+    Warto zauważyć, że w przypadku wprowadzenia limitu czasowego, zmniejszyła się różnica w liczbie przeprowadzonych instrukcji w zależności od wykorzystywanego algorytmu. Obie wartości są jednak znacznie mniejsze od wyników uzyskanych w poprzednim badaniu zarówno dla algorytmu Alfa-Beta, jak i algorytmu Min-Max, który na podanej głębokości bez ograniczenia czasowego nie był w stanie znaleźć odpowiedniego rozwiązania w rozsądnym czasie.
+    Wprowadzenie ograniczenia polegającego na zredukowanie czasu przeznaczonego na podjęcie decyzji jest najbardziej przydatne w przypadku systemów, w których odpowiedź potrzebna jest w określonym czasie.
+    
+    \subsection{Porównanie sposobu ograniczania przeszukiwanych węzłów}
+    Poniższe zestawienie przedstawia porównanie różnych sposobów ograniczania liczby przeszukiwanych węzłów. Badanie przeprowadzone zostało na meczach AI vs AI dla trzech przypadków:
+    
+    \begin{enumerate}
+    \item{Maksymalna głębokość równa 6 kontra maksymalny czas przeszukiwania równy 10s.}
+    \item{Maksymalna głębokość równa 6 i maksymalny czas przeszukiwania równy 10s kontra maksymalny czas przeszukiwania równy 10s.}
+    \item{Maksymalna głębokość równa 6 maksymalny czas przeszukiwania równy 10s kontra maksymalna głębokość równa 6.}
+    \end{enumerate}
+    
+    Badania zostały przeprowadzone z użyciem algorytmu Alfa-Beta w celu zredukowania czasu potrzebnego na obliczenia. 
+    
+        \begin{table}[H]
+    \caption{Wyniki rozgrywek dla różnych sposobów ograniczania liczby przeszukiwanych węzłów}
+    \label{depth_vs_time}
+    \begin{center}
+    \begin{tabular}{|c|c|c|c|c|c|c|}
+    \hline
+    \thead{Nr \\ rozgrywki} &
+    \thead{Ograniczenie \\ gracza \\ rozpoczynającego} & 
+    \thead{Ograniczenie \\ przeciwnika} &
+    \thead{Zwycięzca} & 
+    \thead{Czas rozgrywki} &
+    \thead{Liczba \\ ruchów \\ wygranego} &
+    \thead{Liczba \\ instrukcji \\ wygranego} \\
+    \hline
+    \makecell{}1 & \makecell{Czas} & \makecell{Głębokość} & \makecell{Głębokość} & \makecell{}260.48 & \makecell{}32 & \makecell{} 12320945 \\
+    \hline
+     \makecell{}2 & \makecell{Czas} & \makecell{Głębokość \\ i czas} & \makecell{Głębokość \\ i czas} & \makecell{}195.95 & \makecell{}30 & \makecell{} 3871307 \\
+    \hline
+     \makecell{}3 & \makecell{Głębokość} & \makecell{Głębokość \\ i czas} & \makecell{REMIS} & \makecell{}133.13 & \makecell{}---- & \makecell{}---- \\
+    \hline
+     \makecell{}4 & \makecell{Głębokość} & \makecell{Czas} & \makecell{Głębokość} & \makecell{}381.39 & \makecell{}33 & \makecell{}16104005 \\
+    \hline
+     \makecell{}5 & \makecell{Głębokość \\ i czas} & \makecell{Czas} & \makecell{Głębokość \\ i czas} & \makecell{}288.58 & \makecell{}41 & \makecell{} 11319411 \\
+    \hline
+     \makecell{}6 & \makecell{Głębokość \\ i czas} & \makecell{Głębokość} & \makecell{Głębokość} & \makecell{}245.43 & \makecell{}42 & \makecell{} 16506587 \\
+    \hline
+    \end{tabular}
+    \end{center}
+     \end{table}
+     
+     Jak można zauważyć w przypadku badanych ograniczeń i wykorzystywanej heurystyki oceny ruchów, wygranie rozgrywki nie jest zależne od tego który gracz rozpoczyna grę. Ograniczenie głębokości ma znaczącą przewagę nad ograniczeniem czasu przeznaczonego na ruch, ponieważ zbiór przeszukiwanych węzłów jest w przypadku tego ograniczenia jest większy, a co za tym idzie może doprowadzić do znalezienia lepszego rozwiązania. Dodatkowo można zauważyć, że zastosowanie obu ograniczeń może doprowadzić do różnych skutków. Połączenie obu sposobów osiąga gorsze wyniki niż ograniczenie samej głębokości, jednak rezultat jest obliczany w krótszym czasie. W przypadku ograniczenia czasu jednak porównując rozgrywki 1 i 2 możemy zauważyć, że przeciwnik potrzebował większej ilości ruchów, aby pokonać gracza rozpoczynającego. Podsumowując, oba z podanych sposobów są metodami służącymi do redukcji przeszukiwanych stanów. Ograniczenie głębokości osiąga lepsze wyniki, jednak w przypadku kiedy potrzebujemy odpowiedzi w czasie rzeczywistym ograniczenie czasu przeznaczonego na ruch wydaje się lepszym rozwiązaniem.
+    
+    \section{Badanie wpływu heurystyk na czas przetwarzania i liczbę instrukcji}
+    Poniższe badania mają na celu zbadanie wpływu sposobu oceny ruchu i wyboru kolejności sprawdzanych węzłów na działanie algorytmów Min-Max oraz Alfa-Beta. Oba badania zostały przeprowadzone na meczach AI vs AI, dla różnych sposobów oceny i kolejności węzłów. 
+    
+    \subsection{Wpływ sposobu ocenianiania ruchu na działanie algorytmu}
+    Badanie ma na celu zbadania wpływu różnych sposobów obliczania wartości węzła na wynik działania algorytmu. W zestawieniu wzięto pod uwagę następujące metody.
+    
+    \begin{enumerate}
+    \item Różnica liczby pionków
+    \item Różnica liczby dostępnych ruchów
+     \item Suma różnicy liczby pionków oraz różnicy liczby dostępnych ruchów.
+     \item Suma różnicy liczby pionków oraz różnicy liczby dostępnych ruchów. W przypadku gdy ruch prowadzi do końca gry wartością jest: $\infty$ dla wygranej, -$\infty$ dla przegranej oraz 0 dla remisu.
+     \item Ocena stanu rozgrywki na podstawie posiadanych pól oraz stanów pól sąsiednich. Wartość pola jest zależna od liczby pustych sąsiadów oraz liczby sąsiadów o tym samym kolorze.
+    \end{enumerate}
+    
+    W poniższych zestawieniach numer heurystyki na powyższej liście będzie jej identyfikatorem. Czas rozgrywki jest uśrednionym wynikiem z 5 uruchomień.
+    \newline\newline
+    
+    \subsubsection{Różnica liczby pionków}
+    W powyższym badaniu graczem rozpoczynającym jest algorytm wykorzystujący heurystykę nr 1.
+    
+    \begin{table}[H]
+    \caption{Wyniki rozgrywek dla przeciwko heurystysce nr 1}
+    \label{num_of_man}
+    \centering
+     \begin{tabular}{|c|c|c|c|c|c|c|}
+        \hline
+        \thead{Nr heurystyki \\ przeciwnika} &
+        \thead{Rezultat} & 
+        \thead{Czas rozgrywki [s]} &
+        \thead{Liczba \\ ruchów} &
+        \thead{Liczba \\ instrukcji} &
+        \thead{Liczba ruchów \\ przeciwnika} &
+        \thead{Liczba instrukcji \\ przeciwnika} \\
+        \hline
+        1 & {Wygrana} & \makecell{}5.61 & \makecell{}48 & \makecell{}92932 & \makecell{}40 & \makecell{}253026 \\
+        \hline
+        2 & {Przegrana} & \makecell{}3.21 & \makecell{}19 & \makecell{}52366 &\makecell{}18 & \makecell{}215407 \\
+        \hline
+        3 & {Wygrana} & \makecell{}39.14 & \makecell{}42 & \makecell{}195431 & \makecell{}38 & \makecell{}2703054 \\
+        \hline
+        4 & {Przegrana} & \makecell{}2.85 & \makecell{}14 & \makecell{}49356 & \makecell{}12 & \makecell{}203060 \\
+        \hline
+        5 & {Przegrana} & \makecell{}5.40 & \makecell{}27 & \makecell{}101523 & \makecell{}34 & \makecell{}277087\\
+        \hline
+      \end{tabular}
+    \end{table}
+    
+    \justify
+    Badany sposób oceny jest bardzo prosty, jest to widoczne na uzyskanych rezultatach. W większości przypadków, mimo że posiadał on przewagę w postaci pierwszego ruchu, nie udało mu się zdobyć zwycięstwa, a w rozgrywkach wygranych potrzebował dużo więcej ruchów.
+    
+    \subsubsection{Różnica liczby dostępnych ruchów}
+    W powyższym badaniu graczem rozpoczynającym jest algorytm wykorzystujący heurystykę nr 2.
+    
+    \begin{table}[H]
+    \caption{Wyniki rozgrywek dla przeciwko heurystysce nr 2}
+    \label{possible_moves}
+     \begin{tabular}{|c|c|c|c|c|c|c|}
+        \hline
+        \thead{Nr heurystyki \\ przeciwnika} &
+        \thead{Rezultat} & 
+        \thead{Czas rozgrywki [s]} &
+        \thead{Liczba \\ ruchów} &
+        \thead{Liczba \\ instrukcji} &
+        \thead{Liczba ruchów \\ przeciwnika} &
+        \thead{Liczba instrukcji \\ przeciwnika} \\
+        \hline
+        1 & {Wygrana} & \makecell{}3.59 & \makecell{}31 & \makecell{}248281 & \makecell{}32 & \makecell{}57214 \\
+        \hline
+        2 &  {Remis} & \makecell{}3.76 & \makecell{}25 & \makecell{}217060 & \makecell{}25 & \makecell{}146749\\
+        \hline
+        3 &  {Przegrana} & \makecell{}5.69 & \makecell{}34 & \makecell{}228608 & \makecell{}39 & \makecell{}311925\\
+        \hline
+        4 & {Przegrana} & \makecell{}4.27 & \makecell{}18 & \makecell{}217446 & \makecell{}23 & \makecell{}223822\\
+        \hline
+        5 & {Przegrana} & \makecell{}16.51 & \makecell{}23 & \makecell{}706012 & \makecell{}30 & \makecell{}574695 \\
+        \hline
+      \end{tabular}
+    \end{table}
+    
+    \justify
+    Powyższy sposób oceny wartości ruchu osiągnął fatalne skutki, był w stanie wygrać tylko z algorytmem dokonującym oceny na podstawie różnicy w liczbie pionków. W przypadku rozgrywki z algorytmem wykorzystującym ten sam sposób oceny węzła rezulatem był remis, ponieważ liczba wykonanych ruchów bez ułożenia młynka wyniosła 50.
+    
+    \subsubsection{Suma różnicy liczby pionków oraz różnicy liczby dostępnych ruchów}
+    W powyższym badaniu graczem rozpoczynającym jest algorytm wykorzystujący heurystykę nr 3.
+    
+    \begin{table}[H]
+    \caption{Wyniki rozgrywek dla przeciwko heurystysce nr 3}
+    \label{num_of_man_possible_moves}
+    \centering
+     \begin{tabular}{|c|c|c|c|c|c|c|}
+        \hline
+        \thead{Nr heurystyki \\ przeciwnika} &
+        \thead{Rezultat} & 
+        \thead{Czas rozgrywki [s]} &
+        \thead{Liczba \\ ruchów} &
+        \thead{Liczba \\ instrukcji} &
+        \thead{Liczba ruchów \\ przeciwnika} &
+        \thead{Liczba instrukcji \\ przeciwnika} \\
+        \hline
+        1 & {Wygrana} & \makecell{}4.44 & \makecell{}28 & \makecell{}276632 & \makecell{}21 & \makecell{}104533 \\
+        \hline
+        2 &  {Remis} & \makecell{}3.86 & \makecell{}25 & \makecell{}234683 & \makecell{}25 & \makecell{}146749 \\
+        \hline
+        3 & {Przegrana} & \makecell{}4.69 & \makecell{}19 & \makecell{}235238 & \makecell{}24 & \makecell{}235435\\
+        \hline
+        4 & {Przegrana} & \makecell{}4.41 & \makecell{}16 & \makecell{}234666 & \makecell{}21 & \makecell{}221591\\
+        \hline
+        5 & {Remis} & \makecell{}4.94 & \makecell{}25 & \makecell{}230273 & \makecell{}25 & \makecell{}287385\\
+        \hline
+      \end{tabular}
+    \end{table}
+    
+    \justify
+    Algorytm wykorzystujący ten sposób oceny częściej zmierzał do remisu w przypadku wykorzystywanej w badaniu głębokości. Można także zauważyć, że w każdym meczu miał on znacznie większą liczbę instrukcji, a zatem był zmuszony przeszukać większą ilość stanów. 
+    
+    \subsubsection{Suma różnicy liczby pionków oraz różnicy liczby dostępnych ruchów z warunkiem końcowym}
+    Heurystyka ma za zadanie poprawić działanie algorytmu w końcowych etapach rozgrywki. W przypadku, kiedy ruch decyduje o wygranej zwracana jest maksymalna możliwa wartość, a w przeciwnym wypadku - minimalna.
+    
+    \begin{table}[H]
+    \caption{Wyniki rozgrywek dla przeciwko heurystysce nr 4}
+    \label{num_of_man_end_check}
+    \centering
+     \begin{tabular}{|c|c|c|c|c|c|c|}
+        \hline
+        \thead{Nr heurystyki \\ przeciwnika} &
+        \thead{Rezultat} & 
+        \thead{Czas rozgrywki [s]} &
+        \thead{Liczba \\ ruchów} &
+        \thead{Liczba \\ instrukcji} &
+        \thead{Liczba ruchów \\ przeciwnika} &
+        \thead{Liczba instrukcji \\ przeciwnika} \\
+        \hline
+        1 & {Wygrana} & \makecell{}2.98 & \makecell{}11 & \makecell{}238728 & \makecell{}11 & \makecell{}43960 \\
+        \hline
+        2 & {Remis} & \makecell{}3.77 & \makecell{}25 & \makecell{}234623 &\makecell{}25 & \makecell{}146734 \\
+        \hline
+        3 & {Przegrana} & \makecell{}14.11 & \makecell{}24 & \makecell{}646227 & \makecell{}31 & \makecell{}458415 \\
+        \hline
+        4 & {Przegrana} & \makecell{}4.66 & \makecell{}25 & \makecell{}237532 & \makecell{}20 & \makecell{}229859 \\
+        \hline
+        5 & {Remis} & \makecell{}4.70 & \makecell{}25 & \makecell{}230214 & \makecell{}25 & \makecell{}287385 \\
+        \hline
+      \end{tabular}
+    \end{table}
+    
+    \justify
+    W przypadku heurystyki nr 4 nie osiągneliśmy zadowalających rezultatów. Algorytm zwyciężył tylko z przeciwnikiem wykorzystującym heurystykę oceny na podstawie liczby pionków. Zaskakującą obserwacją jest to, że algorytm przegrał rozgrywkę z algorytmem nr 3, którego rozszerza, może to być jednak spowodowane implementacją heurystyki.
+    
+    \subsubsection{Wyliczenie wartości pola na podstawie stanów jego sąsiadów}
+    Heurystyka polega na wyliczeniu wartości pola na podstawie jego sąsiadów. Im więcej pole ma sąsiadów tym większa jest jego wartość, ma to za zadanie preferować te miejsca, w których najmniej prawdopodobna jest blokada przez przeciwnika, a najbardziej prawdopodobne jest wystąpienie młynka. Dodatkowo wartość jest odpowiednio zwiększana wraz z każdym pustym sąsiadem (a więc możliwym do wykonania ruchem) oraz każdym polem sprzymierzonym (większa możliwość ułożenia młynka).
+    
+    \begin{table}[H]
+    \caption{Wyniki rozgrywek dla przeciwko heurystysce nr 5}
+    \label{num_of_man}
+    \centering
+     \begin{tabular}{|c|c|c|c|c|c|c|}
+        \hline
+        \thead{Nr heurystyki \\ przeciwnika} &
+        \thead{Rezultat} & 
+        \thead{Czas rozgrywki [s]} &
+        \thead{Liczba \\ ruchów} &
+        \thead{Liczba \\ instrukcji} &
+        \thead{Liczba ruchów \\ przeciwnika} &
+        \thead{Liczba instrukcji \\ przeciwnika} \\
+        \hline
+        1 & {Wygrana} & \makecell{}7.51 & \makecell{}32 & \makecell{}444987 & \makecell{}25 & \makecell{}174053 \\
+        \hline
+        2 & {Wygrana} & \makecell{}4.80 & \makecell{}29 & \makecell{}317606 &\makecell{}23 & \makecell{}151791 \\
+        \hline
+        3 & {Wygrana} & \makecell{}14.12 & \makecell{}43 & \makecell{}452326 & \makecell{}38 & \makecell{}687715 \\
+        \hline
+        4 & {Remis} & \makecell{}100.33 & \makecell{}63 & \makecell{}1198444 & \makecell{}60 & \makecell{}5179208 \\
+        \hline
+        5 & {Przegrana} & \makecell{}5.09 & \makecell{}17 & \makecell{}279586 & \makecell{}17 & \makecell{}281504\\
+        \hline
+      \end{tabular}
+    \end{table}
+    
+    \justify
+    Przedstawiony sposób ocen jednoznacznie wyróżnia się pośród badanych jako najlepszy. Przegrał tylko z samym sobą, natomiast remis uzyskał z algorytmem nr 4, który, jak można zauważyć w poprzednim zestawieniu stara się zmierzać do remisu.
+    
+    \newpage
+    \subsubsection{Porównanie metod oceniania ruchów}
+    Poniższe zestawienie przedstawia rezultaty przeprowadzonych w poprzednich badaniach rozgrywek.
+    
+    \begin{table}[H]
+    \caption{Porównanie wyników otrzymanych w poprzednich badaniach}
+    \label{value_heuristics_summary}
+    \centering
+     \begin{tabular}{|c|c|c|c|}
+        \hline
+        \thead{Nr heurystyki} &
+        \thead{Wygrane} & 
+        \thead{Przegrane} &
+        \thead{Remisy} \\
+        \hline
+        1 & \makecell{}2 & \makecell{}7  & \makecell{}0 \\
+        \hline
+        2 & \makecell{}2 & \makecell{}4 & \makecell{}3  \\
+        \hline
+        3 & \makecell{}3 & \makecell{}4 & \makecell{}2 \\
+        \hline
+        4 & \makecell{}4 & \makecell{}2 & \makecell{}3 \\
+        \hline
+        5 & \makecell{}5 & \makecell{}1 & \makecell{}3\\
+        \hline
+      \end{tabular}
+    \end{table}
+    
+    \justify
+    Najgorszą z badanych metod była heurystyka nr 1, która praktycznie w każdej z rozgrywek została pokonana. Algorytm korzystający z tej heurystyki wybiera ruchy, które prowadzą do jak największej różnicy pionków między graczem, a przeciwnikiem. Nie jest to jednak koniecznie najlepszym rozwiązanie, ponieważ przeciwnik w etapie ``latania'' ma dużo większą swobodę w układaniu młynków i uciekaniu z pułapek. Najlepszą z heurystyk okazała się ocena ruchu na podstawie analizy sąsiadujących pól. Algorytm przy wykorzystaniu tego sposobu mógł zaplanować grę w taki sposób, aby ułożyć młynki, celem zredukowania pionków przeciwnika, a jednocześnie dobrać ruch tak, by nie zostać zablokowanym przez przeciwnika. Zastosowanie tego podejścia dało dobre rezultaty czasowe, z wyjątkiem remisu z algorytmem nr 4, gdzie rozgrywka przez dużo większą liczbę ruchów i przeszukiwanych stanów trwała ponad półtorej minuty.
+    
+    \subsection{Wpływ wyboru kolejności węzłów na działanie algorytmu}
+    placeHolder
+    Celem badania jest porównanie różnych metod wyboru kolejności węzłów do sprawdzenia. W zestawieniach wzięto pod uwagę 3 przypadki: wybór węzłów w normalnej kolejności, sortowanie pierwszego rzędu drzewa po wartościach ruchów w obecnym stanie oraz sortowanie każdego rzędu drzewa. Badanie zostało przeprowadzone dla algorytmów Min-Max oraz Alfa-Beta, ponieważ inaczej niż w przypadku heurystyk wyboru wartości, zmiana kolejności wyboru węzłów może doprowadzić do wyboru innego ruchu. Obliczanie ruchów wprzód ograniczono do maksymalnej głębokości drzewa równej 4.
+    
+    \begin{table}[H]
+    \caption{Porównanie wyników heurystyk wyboru kolejności węzłów dla algorytmu Min-Max}
+    \label{min_max_sorting}
+    \centering
+     \begin{tabular}{|c|c|c|c|}
+        \hline
+        \thead{Heurystyka} &
+        \thead{Czas \\ przetwarzania [s]} & 
+        \thead{Liczba ruchów \\ zwycięzcy} &
+        \thead{Liczba instrukcji \\ zwycięzcy} \\
+        \hline
+        {Brak} & \makecell{}31.68 & \makecell{}26  & \makecell{}1375973 \\
+        \hline
+        \makecell{Sortowanie \\ na szczycie} & \makecell{}13.34 & \makecell{}36 & \makecell{}783928  \\
+        \hline
+        \makecell{Sortowanie \\ w każdym rzędzie} & \makecell{}19.90 & \makecell{}36 & \makecell{}783928 \\
+        \hline
+      \end{tabular}
+    \end{table}
+    
+        \begin{table}[H]
+    \caption{Porównanie wyników heurystyk wyboru kolejności węzłów dla algorytmu Alfa-Beta}
+    \label{alfa_beta_sorting}
+    \centering
+     \begin{tabular}{|c|c|c|c|}
+        \hline
+        \thead{Heurystyka} &
+        \thead{Czas \\ przetwarzania [s]} & 
+        \thead{Liczba ruchów \\ zwycięzcy} &
+        \thead{Liczba instrukcji \\ zwycięzcy} \\
+        \hline
+        {Brak} & \makecell{}4.81 & \makecell{}26  & \makecell{}103646 \\
+        \hline
+        \makecell{Sortowanie \\ na szczycie} & \makecell{}2.37 & \makecell{}36 & \makecell{}41061 \\
+        \hline
+        \makecell{Sortowanie \\ w każdym rzędzie} & \makecell{}3.01 & \makecell{}36 & \makecell{}20422 \\
+        \hline
+      \end{tabular}
+    \end{table}
+    
+    \justify
+    Sortowanie węzłów w obu przypadkach znacznie zmniejszyło czas potrzebny na odnalezienie rozwiązania. W przypadku algorytmu Min-Max jest to zapewne spowodowane tym, że węzły sortowane są po ich wartościach w obecnym stanie, jednak różne wartości w obecnie turze niekoniecznie muszą oznaczać, że będzie to najlepszy ruch po przeszukiwaniu w głąb. Zmiana kolejności przeszukiwania może spowodować, że w przypadku ruchów o takich samych wynikach zostanie wybrany inny z nich niż dla algorytmu bez sortowania. Prowadzi to do przeszukiwania innych poddrzew w kolejnych turach gry. Oznacza to, że liczba instrukcji wymaganych do zbadania jednego ruchu pozostaje bez zmian, jednak dla całej rozgrywki może się ona zmienić. Łatwo można spostrzec, że w przypadku algorytmu Min-Max, liczba instrukcji jest dokładnie taka sama dla obu przypadków sortowania.
+    W przypadku algorytmu Alfa-Beta, sortowanie węzłów może doprowadzić do bardziej efektywnego ``cięcia'' rozwiązań nieoptymalnych, a więc znacznie redukowana jest liczba wymaganych do zbadania węzłów. W przypadku sortowania w każdym rzędzie widzimy dwukrotny spadek zbadanych węzłów, jednak czas wykonania jest nieznacznie większy co jest spowodowane wielokrotną koniecznością sortowania list z dostępnymi ruchami.
+    Po przeprowadzonych badaniach możemy stwierdzić, że lepszym z badanych sposobów wyboru kolejności węzłów jest sortowanie rzędu na samym szczycie drzewa. Pozwala to osiągnąć dobre rezultaty w zadowalającym czasie.
+    
+    \section{Podsumowanie}
+    Algorytm Min-Max jest świetnym narzędziem służącym do rozwiązywania między innymi gier o sumie zerowej. Jednak jego podstawowa implementacja polega na zbadaniu takiej liczby stanów, która nie gwarantuje odpowiedzi w satysfakcjonującym czasie. Rozwiązaniem tego problemu jest algorytm Alfa-Beta, który stanowi rozwinięcie klasycznego algorytmu Min-Max. Algorytm w trakcie przeszukiwania dokonuje ``cięć'' podrzew, których badanie nie będzie przynosić żadnych korzyści, a więc takich które nie mają szansy na znalezienie rozwiązania lepszego od obecnego. Niemniej jednak, bez wprowadzenia ograniczeń na maksymalną głębokość przeszukiwania lub zdefiniowania czasu przeznaczonego na podjęcie decyzji, znalezienie rozwiązania w satysfakcjonującym czasie jest praktycznie niemożliwe w przypadku gry ``Młynek''. Ograniczenie maksymalnej głębokości przeszukiwań pozwala na zredukowanie liczby potrzebnych do zbadania stanów. Takie działanie może doprowadzić do uzyskania gorszych rezultatów niż w przypadku przeszukiwania całej głębokości, jednak pozwala ono jednocześnie na szybkie uzyskanie wiadomości zwrotnej o podjętej decyzji. Sytuacja wygląda tak samo w przypadku ograniczenia czasu, które może mieć zastosowanie w systemach, w których czas odpowiedzi nie może przekroczyć określonego progu.
+    
+    Przeprowadzone badania jasno wskazują na to, że sposób oceny ruchu jednoznacznie wpływa na cały proces rozgrywki, a co za tym idzie może prowadzić do różnej liczby ruchów i wykonywanych instrukcji. Badane heurystyki wyboru wartości były jednak bardzo podstawowe i warto rozważyć ich usprawnienie, ponieważ to właśnie one w głównej mierze decydują o skuteczności algorytmu.
+    
+    Ostatnim czynnikiem mającym wpływ na rozgrywkę, który został zbadany, jest kolejność przeszukiwania węzłów w drzewie. Najlepsze w tym przypadku okazało się sortowanie najbardziej zewnętrznej warstwy drzewa, po wartościach wyliczanych na podstawie obecnego stanu rozgrywki. W przypadku algorytmu Min-Max, wykorzystanie tego sposobu doprowadziło do zmniejszenia liczby przeprowadzonych instrukcji. Spowodowane jest to tym, że mimo iż ruch jest lepiej oceniany w danej rundzie, może on otrzymać inną wartość po spojrzeniu na kilka ruchów w przód. W przypadku kiedy wartości dwóch węzłów po spojrzeniu w przód są takie same, a zostały one posortowane na wyższej warstwie, wybrany zostanie ten, który znajduje się wcześniej na posortowanej liście ruchów. Doprowadzi to do badania całkowicie innych przypadków w kolejnych ruchach, a co za tym idzie innej liczby wymaganych do zbadania stanów. W przypadku Alfa-Beta, sortowanie węzłów może sprawić, że cięcie będą dokonywane we wcześniejszych etapach, a więc liczba wymaganych do zbadania stanów rozgrywki zostanie znacznie zredukowana.
+\end{document}

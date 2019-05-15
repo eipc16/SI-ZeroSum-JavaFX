@@ -8,37 +8,29 @@ import SI.models.GameModel;
 
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Game implements GameInterface {
 
-    private final static String MOVE_SEPARATOR = " ";
+    private final static String MOVE_DIVIDER = " ";
     private final static int MOVES_WITHOUT_MILL = 50;
     private final static int ALLOWED_STATE_REPETITIONS = 3;
 
     private GameModel model;
 
-    private Color currentPlayerColor;
-    private Color enemyColor;
-    private Color winnerColor;
+    private Color currentPlayerColor, enemyColor, winnerColor;
 
     private GameResult result;
     private GamePhase phase;
 
-    private int placingMovesLeft = 0;
-    private int removingMovesLeft = 0;
-    private int movesWithoutMill = 0;
-    private int moveCount = 0;
+    private int placingMovesLeft, removingMovesLeft, movesWithoutMill, moveCount;
 
     private Map<Color, String> previousMove;
     private Map<Color, Set<Integer>> playerMills;
-    private Map<Color, List<String>> moveHistory;
-
     private Map<Color, Integer> playerMoves;
-
     private List<String> possibleMoves;
 
     private List<Game> gameStateHistory;
+    private Map<Color, List<String>> moveHistory;
 
     public Game(GameModel gameModel) {
         this.model = gameModel;
@@ -46,6 +38,10 @@ public class Game implements GameInterface {
         this.playerMoves = new HashMap<>();
         this.playerMoves.put(Color.WHITE, 0);
         this.playerMoves.put(Color.BLACK, 0);
+        this.placingMovesLeft = 0;
+        this.removingMovesLeft = 0;
+        this.movesWithoutMill = 0;
+        this.moveCount = 0;
     }
 
     public Game(Game game) {
@@ -87,7 +83,7 @@ public class Game implements GameInterface {
         this.result = GameResult.NONE;
         this.phase = GamePhase.PLACING;
 
-        this.placingMovesLeft = model.getNumOfMans();
+        this.placingMovesLeft = model.getNumOfFields();
         this.removingMovesLeft = 0;
         this.movesWithoutMill = 0;
 
@@ -110,7 +106,7 @@ public class Game implements GameInterface {
 
     @Override
     public void move(String command) throws MoveNotPossibleException {
-        String[] fields = command.split(MOVE_SEPARATOR);
+        String[] fields = command.split(MOVE_DIVIDER);
 
         if(fields.length < 1 || fields.length > 2) {
             throw new MoveNotPossibleException(command);
@@ -146,7 +142,7 @@ public class Game implements GameInterface {
                 move(fields[0], fields[1]);
                 movesWithoutMill++;
                 removingMovesLeft = countActiveMills();
-                this.previousMove.put(currentPlayerColor, fields[0] + MOVE_SEPARATOR + fields[1]);
+                this.previousMove.put(currentPlayerColor, fields[0] + MOVE_DIVIDER + fields[1]);
 
                 break;
 
@@ -196,7 +192,7 @@ public class Game implements GameInterface {
             return false;
         }
 
-        String[] previousFields = previousMove.get(currentPlayerColor).split(MOVE_SEPARATOR);
+        String[] previousFields = previousMove.get(currentPlayerColor).split(MOVE_DIVIDER);
 
         if(previousFields.length < 2) {
             return true;
@@ -211,7 +207,6 @@ public class Game implements GameInterface {
         if(possibleMoves == null) {
             possibleMoves = getPhasePossibleMoves();
         }
-
         return possibleMoves;
     }
 
@@ -247,7 +242,7 @@ public class Game implements GameInterface {
         for(String fieldName : fieldsWithPlayerColor) {
             for(String neighbour : model.getNeighbours(fieldName)) {
                 if(!isBackMove(fieldName, neighbour) && model.getFieldColor(neighbour).equals(Color.NONE)) {
-                    movingMoves.add(fieldName + MOVE_SEPARATOR + neighbour);
+                    movingMoves.add(fieldName + MOVE_DIVIDER + neighbour);
                 }
             }
         }
@@ -264,7 +259,7 @@ public class Game implements GameInterface {
         for(String field : fieldsWithPlayerColor) {
             for(String target : fieldsWithoutColor) {
                 if(!isBackMove(field, target) && model.getFieldColor(target).equals(Color.NONE)) {
-                    flyingMoves.add(field + MOVE_SEPARATOR + target);
+                    flyingMoves.add(field + MOVE_DIVIDER + target);
                 }
             }
         }
@@ -337,7 +332,7 @@ public class Game implements GameInterface {
             result = GameResult.TOO_MANY_MOVES_WITHOUT_MILL;
             phase = GamePhase.FINISHED;
         } else if (countStateRepetitions() > ALLOWED_STATE_REPETITIONS) {
-            this.winnerColor = enemyColor;
+            this.winnerColor = Color.NONE;
             result = GameResult.REPEATED_STATE;
             phase = GamePhase.FINISHED;
         }
@@ -404,18 +399,13 @@ public class Game implements GameInterface {
         return phase.name();
     }
 
-    public GamePhase getState() {
+    public GamePhase getPhase() {
         return phase;
     }
 
     @Override
     public Color getActivePlayer() {
         return currentPlayerColor;
-    }
-
-    @Override
-    public Color getEnemyPlayer() {
-        return enemyColor;
     }
 
     public Color getWinner() {
@@ -442,12 +432,17 @@ public class Game implements GameInterface {
         return phase.equals(GamePhase.FINISHED);
     }
 
-    public List<String> getPlayerMovesHistory(Color color) {
-        return moveHistory.get(color);
-    }
-
-    public int getPlayerMans(Color color) {
+    public int getPlayerFields(Color color) {
         return model.getFields(color).size();
     }
 
+    public Map<Color, Set<String>> getFieldsState() {
+        Map<Color, Set<String>> fieldState = new HashMap<>();
+
+        for(Color c : Color.values()) {
+            fieldState.put(c, model.getFields(c));
+        }
+
+        return fieldState;
+    }
 }

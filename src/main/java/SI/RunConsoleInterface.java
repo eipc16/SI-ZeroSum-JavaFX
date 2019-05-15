@@ -2,13 +2,10 @@ package SI;
 
 import SI.algorithms.Algorithm;
 import SI.algorithms.AlphaBetaPruning;
-import SI.algorithms.MinMax;
 import SI.enums.Color;
 import SI.enums.GamePhase;
 import SI.exceptions.*;
-import SI.logic.heuristics.AlternativeGameHeuristic;
-import SI.logic.heuristics.NumOfMansHeuristic;
-import SI.logic.heuristics.GameHeuristic;
+import SI.logic.heuristics.*;
 import SI.logic.game.Game;
 import SI.logic.game.GameInterface;
 import SI.models.GameModel;
@@ -19,14 +16,15 @@ import java.util.Scanner;
 public class RunConsoleInterface {
     public static void main(String[] args) {
 
-        GameModel model = new NineMensMorris(false);
+        GameModel model = new NineMensMorris();
         GameInterface game = new Game(model);
-        GameHeuristic heuristicWhite = new AlternativeGameHeuristic();
-        GameHeuristic heuristicBlack = new AlternativeGameHeuristic();
 
-        Algorithm white = new AlphaBetaPruning(game, 6, heuristicWhite, true);
-        Algorithm black = new AlphaBetaPruning(game, 1, heuristicBlack, false);
-        //Algorithm black = new MinMax(game,  2, heuristicBlack, false);
+        GameHeuristic heuristicWhite = new WeightedFieldValueHeuristic(20, 8, 10);
+        GameHeuristic heuristicBlack = new WeightedFieldValueHeuristic(20, 8, 10);
+
+        Algorithm white = new AlphaBetaPruning(game, 4, heuristicWhite, true, true, true, Double.MAX_VALUE);
+        //Algorithm black = new AlphaBetaPruning(game, 1, heuristicBlack, false);
+        Algorithm black = new AlphaBetaPruning(game, 4, heuristicBlack, false,false, true, Double.MAX_VALUE);
         //Algorithm black = new MinMax(game,  3);
         Algorithm algorithm;
         game.init();
@@ -44,20 +42,21 @@ public class RunConsoleInterface {
             System.out.println("---------------");
             System.out.print(String.format("Phase: %s | Current player: %s\n", game.getStateName(), game.getActivePlayer()));
             System.out.println(String.format("Moves since last mill: %d | Total moves: %d", game.getMovesSinceMill(), (game.getTotalMoves())));
+            System.out.print(String.format("Placing moves: %d | Removing moves: %s\n", game.getPlacingMovesLeft(), game.getRemovingMovesLeft()));
+            System.out.println(String.format("Possible moves: %s", game.getPossibleMoves()));
 
-            if(!game.getState().equals(GamePhase.FINISHED)) {
+            if(!game.getPhase().equals(GamePhase.FINISHED)) {
+                startMoveTime = System.currentTimeMillis();
                 String best;
                 if(game.getActivePlayer().equals(Color.WHITE)) {
-                    //best = white.getNextBestMove();
-                    System.out.print("Next move: ");
-                    best = scanner.nextLine();
+                    best = white.getNextBestMove();
+//                    System.out.print("Next move: ");
+//                    best = scanner.nextLine();
                 } else {
                     best = black.getNextBestMove();
+//                    System.out.print("Next move: ");
+//                    best = scanner.nextLine();
                 }
-
-                startMoveTime = System.currentTimeMillis();
-                System.out.print(String.format("Placing moves: %d | Removing moves: %s\n", game.getPlacingMovesLeft(), game.getRemovingMovesLeft()));
-                System.out.println(String.format("Possible moves: %s", game.getPossibleMoves()));
                 //String best = algorithm.getNextBestMove();
                 System.out.println(String.format("Best move: %s", best));
                 System.out.print("\nNext move: ");
